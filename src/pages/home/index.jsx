@@ -8,7 +8,7 @@ import Big from 'big.js'
 import { useHistory } from 'react-router-dom'
 import { decodeArgs, txReturnArgsFromHash } from '../../utils/near'
 import useQuery from '../../hooks/useQuery'
-import GameIdModal from '../../components/Modal/gameId'
+import TokenIdModal from '../../components/Modal/tokenId'
 
 const txFee = Big(0.5)
   .times(10 ** 24)
@@ -18,8 +18,8 @@ const GAS = Big(3)
   .toFixed()
 
 const Home = ({ contract }) => {
-  const [gameId, setGameId] = useState('')
-  const [homeBtn, setHomeBtn] = useState('Create A Game')
+  const [tokenId, setTokenId] = useState('')
+  const [homeBtn, setHomeBtn] = useState('Create A Token')
   const [created, setCreated] = useState('')
   const [modal, setModal] = useState(false)
   const query = useQuery()
@@ -35,7 +35,7 @@ const Home = ({ contract }) => {
   }
 
   const handleSubmit = async (e) => {
-    history.push('/game/' + gameId)
+    history.push('/token/' + tokenId)
   }
 
   const handleShowGameId = (arg) => {
@@ -56,7 +56,7 @@ const Home = ({ contract }) => {
             onClick={() => {
               setHomeBtn('Loading...')
               createNewGame().then((val) => {
-                setHomeBtn('Create A Game')
+                setHomeBtn('Create A Token')
               })
             }}
           >
@@ -138,21 +138,21 @@ const Home = ({ contract }) => {
           </h2>
           <form className="w-full flex flex-col items-center">
             <Input
-              value={gameId}
-              onChange={(e) => setGameId(e.target.value)}
-              placeholder="Enter Game ID"
+              value={tokenId}
+              onChange={(e) => setTokenId(e.target.value)}
+              placeholder="Enter Token ID"
             />
             <Button
               style={{ height: 55 }}
               className="mt-12 w-max"
               onClick={handleSubmit}
             >
-              Search Game
+              Search Token
             </Button>
           </form>
         </article>
       </section>
-      <GameIdModal
+      <TokenIdModal
         id={created}
         open={modal}
         handleClose={() => {

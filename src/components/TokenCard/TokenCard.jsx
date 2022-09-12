@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import dateFormatter from '../../utils/dateFormatter'
 import Timer from '../Timer/Timer'
 
-const GameCard = ({
+const TokenCard = ({
   creator,
   startDate,
   endDate,
@@ -70,7 +70,7 @@ const GameCard = ({
         </div>
       </div>
       <div>
-        <Navigate to={`/game/${id}`}> View</Navigate>
+        <Navigate to={`/token/${id}`}> View</Navigate>
       </div>
     </Wrapper>
   )
@@ -103,4 +103,4 @@ const Navigate = styled(Link)`
   display: block;
 `
 
-export default GameCard
+export default TokenCard

@@ -5,8 +5,23 @@ import Button from "../Button/Button";
 import Icon from "../Icon/Icon";
 import Logo from "../Logo/Logo";
 
-const Navbar = ({ nearConfig, wallet }) => {
+const Navbar = ({ currentUser, nearConfig, wallet }) => {
   const { pathname } = useLocation();
+
+  const handleUser = (e) => {
+    if (currentUser && e.target.textContent === "Sign Out") {
+      (function signOut() {
+        wallet.signOut();
+        window.location.replace(
+          window.location.origin + window.location.pathname
+        );
+      })();
+    } else if (!currentUser && e.target.textContent === "Login") {
+      (function signIn() {
+        wallet.requestSignIn(nearConfig.contractName, "NEAR Block Dice");
+      })();
+    }
+  };
 
   return (
     <StyledNav className="py-4 flex items-center justify-between mx-auto">
@@ -19,11 +34,29 @@ const Navbar = ({ nearConfig, wallet }) => {
           <NavLink
             activeClassName="active-link"
             className="mx-8"
-            to="/created-games"
+            to="/created-tokens"
           >
             Created Tokens
           </NavLink>
         </div>
+        <div className="flex ml-16 items-center">
+          <span className="near-line bg-gray-500 mr-12" />
+          <Link to="/profile">
+            {currentUser ? (
+              <img src={generateAvatar(currentUser.accountId)} alt="" className="mr-10 border-2 border-primary rounded-full" />
+            ) : (
+              <Icon
+                className="mr-10"
+                color={pathname === "/profile" ? "#FF6433" : "#1E1B1B"}
+                size={28}
+                icon="avatar"
+              />
+            )}
+          </Link>
+          <Button variant="primary" onClick={handleUser}>
+            {currentUser ? "Sign Out" : "Login"}
+          </Button>
+        </div> 
       </div>
     </StyledNav>
   );
