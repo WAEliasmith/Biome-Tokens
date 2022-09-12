@@ -2,8 +2,8 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Home from "./pages/home";
-import Game from "./pages/game";
 import Profile from "./pages/profile";
+import Game from "./pages/game";
 import CreatedGames from "./pages/created-games";
 
 const App = ({ contract, currentUser, nearConfig, wallet }) => {

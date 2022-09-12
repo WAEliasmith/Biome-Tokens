@@ -20,6 +20,15 @@ async function initContract() {
   // Needed to access wallet
   const walletConnection = new nearAPI.WalletConnection(near);
 
+  // Load in account data
+  let currentUser;
+  if (walletConnection.getAccountId()) {
+    currentUser = {
+      accountId: walletConnection.getAccountId(),
+      balance: (await walletConnection.account().state()).amount,
+    };
+  }
+
   // Initializing our contract APIs by contract name and configuration
   const contract = await new nearAPI.Contract(walletConnection.account(), nearConfig.contractName, {
     // View methods are read-only – they don't modify the state, but usually return some value
@@ -31,13 +40,13 @@ async function initContract() {
     sender: walletConnection.getAccountId(),
   });
 
-  return { contract, nearConfig, walletConnection };
+  return { contract, currentUser, nearConfig, walletConnection };
 }
 
-window.nearInitPromise = initContract().then(({ contract, nearConfig, walletConnection }) => {
+window.nearInitPromise = initContract().then(({ contract, currentUser, nearConfig, walletConnection }) => {
   ReactDOM.render(
     <React.StrictMode>
-      <App contract={contract} nearConfig={nearConfig} wallet={walletConnection} />
+      <App contract={contract} currentUser={currentUser} nearConfig={nearConfig} wallet={walletConnection} />
     </React.StrictMode>,
     document.getElementById("root")
   );
