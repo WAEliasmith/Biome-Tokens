@@ -16,6 +16,7 @@ pub use crate::nft_core::*;
 pub use crate::owner::*;
 pub use crate::royalty::*;
 pub use crate::series::*;
+pub use crate::oracle::*;
 
 mod approval;
 mod enumeration;
@@ -26,6 +27,7 @@ mod nft_core;
 mod owner;
 mod royalty;
 mod series;
+mod oracle;
 
 /// This spec can be treated like a version of the standard.
 pub const NFT_METADATA_SPEC: &str = "nft-1.0.0";
@@ -46,9 +48,24 @@ pub struct Series {
     price: Option<Balance>,
     // Owner of the collection
     owner_id: AccountId,
+    // the value at which whatever measured level is good
+    good_range: i128,
+    // the value at which whatever measured level is bad
+    bad_range: i128,
+    // the AaccountId of the charity
+    charity_id: AccountId,
 }
 
+// #[derive(BorshDeserialize, BorshSerialize)]
+// pub struct Oracle {
+//     // Value of the tracked data
+//     val: Option<i64>,
+//     // Owner of the collection
+//     owner_id: AccountId,
+// }
+
 pub type SeriesId = u64;
+// pub type OracleId = String
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
@@ -73,6 +90,9 @@ pub struct Contract {
 
     //keeps track of the metadata for the contract
     pub metadata: LazyOption<NFTContractMetadata>,
+
+    // //keeps track oracle struct for a given oracle id
+    // pub oracles: UnorderedMap<OracleId,Oracle>
 }
 
 /// Helper structure for keys of the persistent collections.
