@@ -1,4 +1,6 @@
-# Starting with a REACT/NEAR tutorial https://blog.openreplay.com/connect-a-react-app-to-the-near-blockchain
+# Starting with a REACT/NEAR tutorial 
+
+https://blog.openreplay.com/connect-a-react-app-to-the-near-blockchain
 
 To run, use `yarn start`
 
