@@ -15,7 +15,7 @@ pub trait NonFungibleTokenCore {
         max_len_payout: u32,
     ) -> Payout;
 
-    pub fn update_series_royalty(
+    fn update_series_royalty(
         &mut self,
         val: i128,
         id: u64
@@ -172,7 +172,7 @@ impl NonFungibleTokenCore for Contract {
     }
     
     // TODO Needs comments
-    pub fn update_series_royalty(
+    fn update_series_royalty(
         &mut self,
         val: i128,
         id: u64

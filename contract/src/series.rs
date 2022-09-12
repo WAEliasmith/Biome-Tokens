@@ -18,8 +18,10 @@ impl Contract {
         price: Option<U128>,
         good_range: i128,
         bad_range: i128,
-        charity_id: AccountId
+        charity_id: AccountId,
+        oracle_id: OracleId,
     ) {
+        // TODO check oracle id exists before creating new nft
         // Measure the initial storage being used on the contract
         let initial_storage_usage = env::storage_usage();
 
@@ -49,6 +51,7 @@ impl Contract {
                         good_range,
                         bad_range,
                         charity_id,
+                        oracle_id,
                     }
                 )
                 .is_none(),

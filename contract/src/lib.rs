@@ -67,8 +67,8 @@ pub struct Series {
 // }
 
 pub type SeriesId = u64;
-// pub type OracleId = String
-pub type OracleId = String
+pub type OracleId = String;
+pub type OracleVal = i128;
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
@@ -95,7 +95,7 @@ pub struct Contract {
     pub metadata: LazyOption<NFTContractMetadata>,
 
     // //keeps track oracle struct for a given oracle id
-    pub oracles: UnorderedMap<OracleId,Oracle>
+    pub oracles_by_id: UnorderedMap<OracleId,OracleVal>
 }
 
 /// Helper structure for keys of the persistent collections.
@@ -103,6 +103,7 @@ pub struct Contract {
 pub enum StorageKey {
     ApprovedMinters,
     ApprovedCreators,
+    OracleById,
     SeriesById,
     SeriesByIdInner { account_id_hash: CryptoHash },
     TokensPerOwner,
@@ -166,6 +167,7 @@ impl Contract {
                 StorageKey::NFTContractMetadata.try_to_vec().unwrap(),
                 Some(&metadata),
             ),
+            oracles_by_id: UnorderedMap::new(StorageKey::OracleById.try_to_vec().unwrap()),
         };
 
         //return the Contract object
