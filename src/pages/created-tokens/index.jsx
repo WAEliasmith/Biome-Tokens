@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import GameCard from '../../components/GameCard/GameCard'
+import TokenCard from '../../components/TokenCard/TokenCard'
 import DualRingLoader from '../../components/Icon/DualRingLoader'
 import Navigator from '../../components/Navigator/Navigator'
 import parseNanoSecToMs from '../../utils/parseDateToMs'
@@ -11,8 +11,8 @@ export const LoaderWrapper = styled.div`
   justify-content: center;
 `
 
-const CreatedGames = ({ contract }) => {
-  const [createdGames, setCreatedGames] = useState(null)
+const CreatedTokens = ({ contract }) => {
+  const [createdTokens, setCreatedTokens] = useState(null)
   const [loading, setLoading] = useState(false)
 
   async function getCreatedGames() {
@@ -24,15 +24,15 @@ const CreatedGames = ({ contract }) => {
     }
   }
 
-  const assignCreatedGames = () => {
+  const assignCreatedTokens = () => {
     getCreatedGames()
-      .then((res) => setCreatedGames(res?.data))
+      .then((res) => setCreatedTokens(res?.data))
       .finally(() => setLoading(false))
   }
 
   useEffect(() => {
     setLoading(true)
-    assignCreatedGames()
+    assignCreatedTokens()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -45,11 +45,11 @@ const CreatedGames = ({ contract }) => {
         </LoaderWrapper>
       ) : (
         <main className="my-20 mx-auto grid grid-cols-3 gap-10">
-          {createdGames?.map((el) => {
+          {createdTokens?.map((el) => {
             console.log(el)
             // if (el.status === 0) {
             return (
-              <GameCard
+              <TokenCard
                 key={el.id}
                 id={el.id}
                 createdAt={
@@ -104,4 +104,4 @@ const Wrapper = styled.div`
   }
 `
 
-export default CreatedGames
+export default CreatedTokens

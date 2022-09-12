@@ -65,7 +65,7 @@ const CloseWrapper = styled.button`
   cursor: pointer;
 `;
 
-export default function GameIdModal({ id, open, handleClose }) {
+export default function TokenIdModal({ id, open, handleClose }) {
  
   return (
     <>

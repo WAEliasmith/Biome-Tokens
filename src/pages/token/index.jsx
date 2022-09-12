@@ -9,9 +9,9 @@ import Timer from '../../components/Timer/Timer'
 import useQuery from '../../hooks/useQuery'
 import dateFormater from '../../utils/dateFormatter'
 import parseNanoSecToMs from '../../utils/parseDateToMs'
-import { LoaderWrapper } from '../created-games'
+import { LoaderWrapper } from '../created-tokens'
 
-const CompletedGames = ({ contract }) => {
+const CompletedTokens = ({ contract }) => {
   const { id } = useParams()
   const query = useQuery()
   const history = useHistory()
@@ -25,13 +25,13 @@ const CompletedGames = ({ contract }) => {
   async function getGameDetails() {
     setLoading(true)
     try {
-      const [game] = await contract?.getGameDetails({ gameId: id })
+      const [token] = await contract?.getGameDetails({ tokenId: id })
 
-      console.log(game)
-      const players = await contract?.getPlayersDetails({ gameId: id })
+      console.log(token)
+      const players = await contract?.getPlayersDetails({ tokenId: id })
 
       setPlayers(players)
-      setData(game)
+      setData(token)
     } catch (error) {
       console.log(error)
     } finally {
@@ -54,14 +54,14 @@ const CompletedGames = ({ contract }) => {
   }
   return (
     <Wrapper>
-      <header style={{ textAlign: 'center' }}>GAME ID: {id}</header>
+      <header style={{ textAlign: 'center' }}>token ID: {id}</header>
       {loading ? (
         <LoaderWrapper className="mt-20">
           <DualRingLoader width={100} height={100} />
         </LoaderWrapper>
       ) : data ? (
         <main className="mt-10 mx-auto grid ">
-          <div className="bd-game-details grid-cols-2 gap-10 relative">
+          <div className="bd-token-details grid-cols-2 gap-10 relative">
             <div className="flex items-center justify-between">
               <h3 className="text-2xl font-semibold">
                 Creator: {data?.createdBy}
@@ -162,7 +162,7 @@ const CompletedGames = ({ contract }) => {
           className="text-2xl font-semibold my-20 text-center p-3 full-width "
           variant="mint"
         >
-          Game not fetched
+          token not fetched
         </h3>
       )}
     </Wrapper>
@@ -186,7 +186,7 @@ const Wrapper = styled.div`
     border-radius: 8px;
   }
 
-  & > .bd-game-details {
+  & > .bd-token-details {
     max-width: 85%;
     margin: auto;
     height: 100%;
@@ -203,4 +203,4 @@ const Wrapper = styled.div`
   }
 `
 
-export default CompletedGames
+export default CompletedTokens

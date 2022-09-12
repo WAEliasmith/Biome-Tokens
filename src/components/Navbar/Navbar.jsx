@@ -34,7 +34,7 @@ const Navbar = ({ currentUser, nearConfig, wallet }) => {
           <NavLink
             activeClassName="active-link"
             className="mx-8"
-            to="/created-games"
+            to="/created-tokens"
           >
             Created Tokens
           </NavLink>

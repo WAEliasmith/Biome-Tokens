@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import GameCard from '../../components/GameCard/GameCard'
+import TokenCard from '../../components/TokenCard/TokenCard'
 import Navigator from '../../components/Navigator/Navigator'
 import parseNanoSecToMs from '../../utils/parseDateToMs'
 
 const Profile = ({ contract, currentUser }) => {
-  const [games, setGames] = useState([])
+  const [tokens, setTokens] = useState([])
 
   const getProfile = async () => {
     const profile = await contract?.getProfileDetails({
@@ -13,8 +13,8 @@ const Profile = ({ contract, currentUser }) => {
     })
 
     profile.forEach(async (el) => {
-      const data = await contract?.getGameDetails({ gameId: el })
-      setGames((prev) => [data[0], ...prev])
+      const data = await contract?.getGameDetails({ tokenId: el })
+      setTokens((prev) => [data[0], ...prev])
     })
   }
 
@@ -25,17 +25,17 @@ const Profile = ({ contract, currentUser }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log(games)
+  console.log(tokens)
 
   return (
     <Wrapper>
       <header>Profile</header>
       <main className="my-20 mx-auto grid grid-cols-2 gap-10">
         {
-          games?.map((el) => {
+          tokens?.map((el) => {
             if (el) {
               return (
-                <GameCard
+                <TokenCard
                   key={el.id}
                   id={el.id}
                   creator={el.createdBy}
