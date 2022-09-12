@@ -52,8 +52,10 @@ pub struct Series {
     good_range: i128,
     // the value at which whatever measured level is bad
     bad_range: i128,
-    // the AaccountId of the charity
+    // the AccountId of the charity
     charity_id: AccountId,
+
+    oracle_id: OracleId
 }
 
 // #[derive(BorshDeserialize, BorshSerialize)]
@@ -66,6 +68,7 @@ pub struct Series {
 
 pub type SeriesId = u64;
 // pub type OracleId = String
+pub type OracleId = String
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
@@ -92,7 +95,7 @@ pub struct Contract {
     pub metadata: LazyOption<NFTContractMetadata>,
 
     // //keeps track oracle struct for a given oracle id
-    // pub oracles: UnorderedMap<OracleId,Oracle>
+    pub oracles: UnorderedMap<OracleId,Oracle>
 }
 
 /// Helper structure for keys of the persistent collections.
