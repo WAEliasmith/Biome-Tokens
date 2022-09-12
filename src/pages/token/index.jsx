@@ -3,33 +3,72 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
+import Button from '../../components/Button/Button'
 import DualRingLoader from '../../components/Icon/DualRingLoader'
 import ModalComponent from '../../components/Modal'
 import Timer from '../../components/Timer/Timer'
 import useQuery from '../../hooks/useQuery'
 import dateFormater from '../../utils/dateFormatter'
+import { decodeArgs, GAS, txFee, txReturnArgsFromHash } from '../../utils/near'
 import parseNanoSecToMs from '../../utils/parseDateToMs'
 import { LoaderWrapper } from '../created-tokens'
 
-const CompletedTokens = ({ contract }) => {
+const CompletedTokens = ({ contract, currentUser }) => {
   const { id } = useParams()
   const query = useQuery()
   const history = useHistory()
+  const hash = query.get('transactionHashes')
+  const [winners, setWinners] = useState(null)
   const [data, setData] = useState(null)
   const [players, setPlayers] = useState(null)
+  const [userPlayer, setUserPlayer] = useState(null)
+  const [claimStats, setClaimStats] = useState(null)
+  const [rolled, setRolled] = useState('')
   const [loading, setLoading] = useState(false)
+  const [btnLoad, setBtnLoad] = useState(false)
   const [counter, setCounter] = useState('00:00')
   const [rollModal, setRollModal] = useState(false)
   const [roll, setRoll] = useState([])
 
-  async function getGameDetails() {
+  async function getTokenDetails() {
     setLoading(true)
     try {
-      const [token] = await contract?.getGameDetails({ tokenId: id })
+      const [token] = await contract?.getGameDetails({ gameId: id })
 
       console.log(token)
-      const players = await contract?.getPlayersDetails({ tokenId: id })
+      const players = await contract?.getPlayersDetails({ gameId: id })
+      const [userPl] = players.filter(
+        (val) => val.playerId === currentUser?.accountId,
+      )
 
+      if (token.status === 2) {
+        const resWinners = await contract?.getWinners({ gameId: id })
+        if (resWinners) {
+          setWinners(resWinners)
+          console.log(resWinners)
+          if (userPl) {
+            setRolled(userPl?.timeRolled > 0 ? 'Rolled' : 'Roll')
+            setClaimStats(
+              resWinners?.includes(userPl?.playerId)
+                ? 'won'
+                : resWinners?.includes(userPl?.playerId) && userPl?.claimedWin
+                ? 'claimed'
+                : 'lost',
+            )
+          }
+        } else {
+          setRolled('Join')
+          setClaimStats(false)
+        }
+      } else {
+        if (userPl) {
+          setRolled(userPl?.timeRolled > 0 ? 'Rolled' : 'Roll')
+        } else {
+          setRolled('Join')
+        }
+      }
+
+      setUserPlayer(userPl)
       setPlayers(players)
       setData(token)
     } catch (error) {
@@ -40,9 +79,113 @@ const CompletedTokens = ({ contract }) => {
   }
 
   useEffect(() => {
-    getGameDetails()
+    if (hash && currentUser) {
+      txReturnArgsFromHash({ hash, accountId: currentUser.accountId }).then(
+        (res) => {
+          console.log(decodeArgs(res))
+          // console.log(JSON.parse()
+          handleRoll(decodeArgs(res))
+        },
+      )
+    }
+    // eslint-disable-next-line
+  }, [])
+
+  useEffect(() => {
+    getTokenDetails()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const handleClick = async () => {
+    setBtnLoad(true)
+    try {
+      if (data?.status === 2 && winners?.includes(currentUser.accountId)) {
+        await contract?.claimWinnings({ gameId: id })
+      }
+
+      if (data?.status !== 2) {
+        if (userPlayer) {
+          await contract.rollDice({ gameId: id })
+        } else {
+          await contract.joinToken({ gameId: id }, GAS, txFee)
+        }
+      }
+    } catch (error) {
+      console.log(error.message)
+    } finally {
+      setBtnLoad(false)
+      getTokenDetails()
+    }
+  }
+
+  const renderButton = () => {
+    if (data?.status === 2) {
+      return (
+        userPlayer && (
+          <Button
+            disabled={claimStats !== 'won'}
+            variant={
+              claimStats === 'lost'
+                ? 'red'
+                : claimStats === 'won'
+                ? 'mint'
+                : 'disabled'
+            }
+            onClick={handleClick}
+          >
+            {btnLoad
+              ? 'Processing...'
+              : claimStats === 'lost'
+              ? 'Lost'
+              : claimStats === 'won'
+              ? 'Claim Win'
+              : 'Claimed'}
+          </Button>
+        )
+      )
+    }
+
+    return (
+      <Button
+        disabled={rolled === 'Rolled'}
+        variant={
+          rolled === 'Rolled'
+            ? 'disabled'
+            : rolled === 'Roll'
+            ? 'mint'
+            : 'secondary'
+        }
+        onClick={handleClick}
+      >
+        {btnLoad ? 'Processing...' : rolled}
+      </Button>
+    )
+  }
+
+  useEffect(() => {
+    var intervalVar = setInterval(() => {
+      if (data?.ended > 0 && data?.status === 1) {
+        const sTime = new Date(parseNanoSecToMs(data?.ended))
+        const eTime = new Date()
+        const countdownTime = sTime.getTime() - eTime.getTime()
+        const minutes = Math.floor(
+          (countdownTime % (1000 * 60 * 60)) / (1000 * 60),
+        )
+        const seconds = Math.floor((countdownTime % (1000 * 60)) / 1000)
+        if (countdownTime > 0) {
+          setCounter(
+            `${minutes < 10 ? '0' + minutes : minutes}:${
+              seconds < 10 ? '0' + seconds : seconds
+            }`,
+          )
+        } else {
+          setCounter('00:00')
+        }
+      }
+    }, 1000)
+
+    return () => clearInterval(intervalVar)
+  }, [data])
 
   const handleRoll = (dice) => {
     if (Array.isArray(dice)) {
@@ -54,7 +197,7 @@ const CompletedTokens = ({ contract }) => {
   }
   return (
     <Wrapper>
-      <header style={{ textAlign: 'center' }}>token ID: {id}</header>
+      <header style={{ textAlign: 'center' }}>TOKEN ID: {id}</header>
       {loading ? (
         <LoaderWrapper className="mt-20">
           <DualRingLoader width={100} height={100} />
@@ -154,6 +297,9 @@ const CompletedTokens = ({ contract }) => {
                 ))}
               </div>
             </div>
+            <div className="full-width mt-10 flex flex-col items-center">
+              {renderButton()}
+            </div>
           </div>
           <footer className="h-20 mt-16" />
         </main>
@@ -162,9 +308,23 @@ const CompletedTokens = ({ contract }) => {
           className="text-2xl font-semibold my-20 text-center p-3 full-width "
           variant="mint"
         >
-          token not fetched
+          Token not fetched
         </h3>
       )}
+
+      <ModalComponent
+        dice1={roll[0]}
+        dice2={roll[1]}
+        open={rollModal && roll.length > 0}
+        handleClose={() => {
+          query.delete('transactionHashes')
+          history.replace({
+            search: query.toString(),
+          })
+
+          setRollModal(false)
+        }}
+      />
     </Wrapper>
   )
 }

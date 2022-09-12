@@ -14,7 +14,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
         <Route exact path="/" render={(props) => <Home {...props} contract={contract} currentUser={currentUser} />} />
         <Route exact path="/created-tokens" render={(props) => <Createdtokens {...props} contract={contract} currentUser={currentUser} />} />
         <Route exact path="/profile" render={(props) => <Profile {...props} contract={contract} currentUser={currentUser} />} />
-        <Route exact path="/token/:id" render={(props) => <token {...props} contract={contract} currentUser={currentUser} />} />
+        <Route exact path="/token/:id" render={(props) => <Token {...props} contract={contract} currentUser={currentUser} />} />
       </Switch>
       <Footer />
     </BrowserRouter>

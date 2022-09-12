@@ -38,11 +38,6 @@ const Home = ({ contract }) => {
     history.push('/token/' + tokenId)
   }
 
-  const handleShowGameId = (arg) => {
-    setCreated(arg)
-    setModal(true)
-  }
-
   return (
     <Wrapper>
       <section className="bd-intro mx-auto flex items-center justify-between">
