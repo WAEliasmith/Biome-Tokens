@@ -37,6 +37,10 @@ public class MapHandler : MonoBehaviour
     public float x;
     public float y;
     public float pollution;
+    public string name;
+    public string oracle;
+    public string url;
+
   }
 
   public NFT[] NFTs = new NFT[5];
@@ -68,22 +72,78 @@ public class MapHandler : MonoBehaviour
   public float bbase = 0.1f;
   public float gbase = 0.4f;
 
-  public float pollutionRange = 10f;
+  public float pollutionmod = 1.1f;
+
+  public float pollutionRange = 15f;
 
   public bool start = false;
 
+  [System.Serializable]
+  public class TokenInfo
+  {
+    public string oracle;
+    public float pollution;
+    public string name;
+    public string url;
+  }
+
+  public class TokenInfoCollection {
+    public TokenInfo[] tokens;
+  }
+
   public void SendToController(string message)
   {
-    Debug.Log(message);
-
-    //load nfts from message
-
-
     start = true;
+
+    message = "{\"tokens\":[{\"pollution\":1,\"name\":\"name\",\"oracle\":\"oraclename\",\"url\":\"https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350\"},{\"pollution\":0,\"name\":\"name2\",\"oracle\":\"oraclename2\",\"url\":\"https://raw.githubusercontent.com/gist/creaktive/781249/raw/2ea60f845a536a29ba15ca235cb52c465cdf4e4c/trollface.png\"}]}";
+    //message = "{\"tokens\":[{\"pollution\":1,\"name\":\"name\",\"oracle\":\"oraclename\",\"url\":\"https://static.wikia.nocookie.net/jerma-lore/images/e/e3/JermaSus.jpg/revision/latest?cb=20201206225609\"},{\"pollution\":0,\"name\":\"name2\",\"oracle\":\"oraclename2\",\"url\":\"https://wompampsupport.azureedge.net/fetchimage?siteId=7575&v=2&jpgQuality=100&width=700&url=https%3A%2F%2Fi.kym-cdn.com%2Fphotos%2Fimages%2Fnewsfeed%2F002%2F349%2F699%2F077.jpg\"}]}";
+    
+    int dupeData = 20;
+    //load nfts from message
+    TokenInfoCollection tokenCollection = JsonUtility.FromJson<TokenInfoCollection>(message);
+    //Debug.Log(tokenCollection.tokens[0].pollution);
+    NFTs = new NFT[tokenCollection.tokens.Length*dupeData];
+    for (int i = 0; i < dupeData; i++){
+      for (int k = 0; k < tokenCollection.tokens.Length; k++){
+        NFT t = new NFT();
+        t.pollution = tokenCollection.tokens[k].pollution;
+        t.name = tokenCollection.tokens[k].name;
+        t.oracle = tokenCollection.tokens[k].oracle;
+        t.url = tokenCollection.tokens[k].url;
+
+
+        if(dupeData > 1){
+          t.name = (t.name + " " + (0 + UnityEngine.Random.Range(0,1000)).ToString());
+          t.pollution = UnityEngine.Random.Range(0,1000) * 0.001f;
+        }
+        NFTs[dupeData*k+i] = t;
+      }
+    }
+
+    //place NFTs in world
+    Vector3 placePos = new Vector3(0,-7,0);
+    Vector3 placeDirection = new Vector3(15,0,0);
+    float placeAngle = 45f;
+
+    for (int k = 0; k < NFTs.Length; k++){
+      NFT t = NFTs[k];
+
+      t.x = placePos.x;
+      t.y = placePos.y;
+      //rotate placeDirection
+      placeDirection = Quaternion.Euler(0, 0, placeAngle) * placeDirection;
+
+      placeAngle = placeAngle * 0.97f;
+      placePos = placePos + placeDirection; 
+    }
+
     for (int k = 0; k < NFTs.Length; k++){
       NFT t = NFTs[k];
       GameObject p = Instantiate(NFTprefab, new Vector3(t.x,t.y,-0.5f), Quaternion.identity);
       p.GetComponent<NFTHandler>().pollution = t.pollution;
+      p.GetComponent<NFTHandler>().name = t.name;
+      p.GetComponent<NFTHandler>().oracle = t.oracle;
+      p.GetComponent<NFTHandler>().url = t.url;
     }
   }
 
@@ -93,11 +153,11 @@ public class MapHandler : MonoBehaviour
     //random seed
     seed = UnityEngine.Random.Range(0,1000000);
 
-    gameObject.SendMessage("MapHandler", "start");
+    gameObject.SendMessage("SendToController", "start2");
   }
 
   void DetectPlayerTile(){
-    Debug.Log(Vector3Int.FloorToInt(player.transform.position));
+    //Debug.Log(Vector3Int.FloorToInt(player.transform.position));
 
     Color color = Floor.GetTile<Tile>(Vector3Int.FloorToInt(player.transform.position)).color;
     float H, S, V;
@@ -125,7 +185,7 @@ public class MapHandler : MonoBehaviour
             float dist = Vector3.Distance(player.transform.position + new Vector3(i, j, 0), new Vector3(t.x, t.y, 0));
             if(dist < pollutionRange){
               //pollution affects this tile based on dist
-              Smod += ((pollutionRange-dist)/pollutionRange)*(0.5f-t.pollution);
+              Smod += ((pollutionRange-dist)/pollutionRange)*(0.5f-t.pollution*pollutionmod);
             }
           }
 
@@ -150,7 +210,7 @@ public class MapHandler : MonoBehaviour
           if(i == 0 && j == 0){
             hue = H;
             saturation = S;
-            Debug.Log(Smod);
+            //Debug.Log(Smod);
           }
 
           //choose floor sprite

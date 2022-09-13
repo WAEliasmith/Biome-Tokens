@@ -40,7 +40,7 @@ const Navbar = ({ currentUser, nearConfig, wallet }) => {
             onClick={(e) => {
               console.log("window.location.href", window.location.href)
               e.preventDefault();
-              //change tabs with reload if coming from unity game
+              //change tabs with reload if coming from unity experience
               if(window.location.href === "http://localhost:3000/"){
                 window.location.href = "/created-tokens"
 
@@ -58,7 +58,7 @@ const Navbar = ({ currentUser, nearConfig, wallet }) => {
             onClick={(e) => {
               console.log("window.location.href", window.location.href)
               e.preventDefault();
-              //change tabs with reload if coming from unity game
+              //change tabs with reload if coming from unity experience
               if(window.location.href === "http://localhost:3000/"){
                 window.location.href = "/oracles"
               } else {
@@ -67,6 +67,23 @@ const Navbar = ({ currentUser, nearConfig, wallet }) => {
             }}
           >
             View Oracles
+          </NavLink>
+          <NavLink
+            activeClassName="active-link"
+            className="mx-8"
+            to="#"
+            onClick={(e) => {
+              console.log("window.location.href", window.location.href)
+              e.preventDefault();
+              //change tabs with reload if coming from unity experience
+              if(window.location.href === "http://localhost:3000/"){
+                window.location.href = "/mint"
+              } else {
+                history.push("/mint");
+              }
+            }}
+          >
+            Create a token
           </NavLink>
         </div>
         <div className="flex ml-16 items-center">
