@@ -30,6 +30,7 @@ jobs:
           python-version: 3.8 #install the python needed
       - name: execute py script # run the run.py to get the latest data
         run: |
+          pip install requests
           python contract/oracle/carbon-emission-oracle.py
       - name: Run a multi-line script
         run: |
