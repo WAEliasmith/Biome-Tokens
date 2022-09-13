@@ -38,6 +38,8 @@ jobs:
           wget https://github.com/near/near-cli-rs/releases/download/0.1.16/near-cli-0.1.16-x86_64-unknown-linux-gnu.tar.gz
           tar xzvf near-cli-0.1.16-x86_64-unknown-linux-gnu.tar.gz
           CarbonEmission=`python oracle/carbon-emission-oracle.py`
+          echo $CarbonEmission
           OwnerId="biome.zdefranc.testnet"
+          echo $OwnerId
           ./near-cli-0.1.16-x86_64-unknown-linux-gnu/near-cli execute change-method network testnet contract $OwnerId call set_oracle_value '{"oracle_id": "emissions", "val": "'$CarbonEmission'"}' --prepaid-gas '100.000 TeraGas' --attached-deposit '0 NEAR' signer $OwnerId sign-private-key --signer-public-key ed25519:89JPp9Lng5JBZsjyKFzrEeEvqAPbGcQv9keDYpnrpp81 --signer-private-key ed25519:3t7acfMwkK1yzgKX58EaEUVUUkQDaT42oph66G4RUEPXvMCiZAwMSQNZH364PvkGhyyEjPSZcbie1Z4sk13SKYa5 send
           
