@@ -174,6 +174,7 @@ impl NonFungibleTokenCore for Contract {
     }
     
     // TODO Needs comments
+    #[private]
     fn update_series_royalty(
         &mut self,
         tracked_val: i128,

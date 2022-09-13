@@ -65,7 +65,6 @@ impl Contract {
                 .get(&id)
                 .expect("Not a series");
         if series.royalty.is_none(){
-            env::log_str("currently adding default royalty");
             let mut default_royalty = HashMap::new();
             default_royalty.insert(series.charity_id.clone(), 5 as u32);
             
@@ -171,5 +170,19 @@ impl Contract {
         } else {
             refund_deposit(required_storage_in_bytes);
         }
+    }
+
+    #[private]
+    pub fn change_media(
+        &mut self,
+        new_url: Option<String>, 
+        id: u64,
+    ){
+        env::log_str(&format!("New URL: {}", new_url.clone().unwrap_or("NO URL".to_string())));
+        let mut series = self.series_by_id.get(&id).expect("Not a series.");
+        let mut series_metadata = series.metadata;
+        series_metadata.media = new_url;
+        series.metadata = series_metadata;
+        self.series_by_id.insert(&id, &series);
     }
 }

@@ -6,7 +6,7 @@ set -e
 #building and deploying
 cd /Users/min/Documents/NEAR_Stuff/Biome-Tokens/contract
 sh ./build.sh
-near dev-deploy -f /Users/min/Documents/NEAR_Stuff/Biome-Tokens/out/series.wasm && export NFT_CONTRACT_ID=$(cat neardev/dev-account)
+near dev-deploy -f /Users/min/Documents/NEAR_Stuff/Biome-Tokens/contract/res/series.wasm && export NFT_CONTRACT_ID=$(cat neardev/dev-account)
 
 #creating fake charity
 #near create-account charity.minqianlu.testnet --masterAccount minqianlu.testnet --initialBalance 20
@@ -23,7 +23,10 @@ near call $NFT_CONTRACT_ID create_series '{"id": 1, "metadata": {"title": "SERIE
 near view $NFT_CONTRACT_ID get_series
 
 #change royalties and check if it changed
-near call $NFT_CONTRACT_ID update_series_royalty '{"tracked_val": 100, "id": 1}' --accountId $SERIES_OWNER
+# near call $NFT_CONTRACT_ID update_series_royalty '{"tracked_val": 75, "id": 1}' --accountId $SERIES_OWNER
+# near view $NFT_CONTRACT_ID get_series
+
+near call $NFT_CONTRACT_ID change_media '{"new_url": "new test URL", "id": 1}' --accountId $SERIES_OWNER
 near view $NFT_CONTRACT_ID get_series
 
 
