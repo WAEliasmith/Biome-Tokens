@@ -1,4 +1,4 @@
-use std::convert::TryInto;
+// use std::convert::TryInto;
 
 use serde_json::to_string;
 
@@ -27,6 +27,7 @@ impl Contract {
 
         env::log_str(&format!("{}",&self.oracles_by_id.get(&oracle_id).unwrap()))
     }
+<<<<<<< HEAD
 
     pub fn get_oracle_value(
         &mut self,
@@ -38,3 +39,7 @@ impl Contract {
         oracle_val
     }
 }
+=======
+}
+
+>>>>>>> 7c9a56a41266e3f4b20cc543c1b018df08e097bc
