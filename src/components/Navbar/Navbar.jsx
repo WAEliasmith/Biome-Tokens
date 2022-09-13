@@ -4,9 +4,11 @@ import generateAvatar from "../../utils/generateAvatar";
 import Button from "../Button/Button";
 import Icon from "../Icon/Icon";
 import Logo from "../Logo/Logo";
+import { useHistory } from "react-router-dom";
 
 const Navbar = ({ currentUser, nearConfig, wallet }) => {
   const { pathname } = useLocation();
+  const history = useHistory();
 
   const handleUser = (e) => {
     if (currentUser && e.target.textContent === "Sign Out") {
@@ -34,9 +36,20 @@ const Navbar = ({ currentUser, nearConfig, wallet }) => {
           <NavLink
             activeClassName="active-link"
             className="mx-8"
-            to="/created-tokens"
+            to="#"
+            onClick={(e) => {
+              console.log("window.location.href", window.location.href)
+              e.preventDefault();
+              //change tabs with reload if coming from unity game
+              if(window.location.href === "http://localhost:3000/"){
+                window.location.href = "/created-tokens"
+
+              } else {
+                history.push("/created-tokens");
+              }
+            }}
           >
-            Created Tokens
+            Find Tokens
           </NavLink>
         </div>
         <div className="flex ml-16 items-center">

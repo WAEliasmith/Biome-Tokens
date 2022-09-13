@@ -21,3 +21,56 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+# Unity folders and files
+###
+[Aa]ssets/AssetStoreTools*
+# [Bb]uild/
+[Ll]ibrary/
+[Ll]ocal[Cc]ache/
+[Oo]bj/
+[Tt]emp/
+[Ll]ogs/
+[Uu]nityGenerated/
+[Uu]ser[Ss]ettings/
+unity-app/[Aa]ssets/AssetStoreTools*
+unity-app/[Bb]uild/
+unity-app/[Ll]ibrary/
+unity-app/[Ll]ocal[Cc]ache/
+unity-app/[Oo]bj/
+unity-app/[Tt]emp/
+unity-app/[Uu]nityGenerated/
+unity-app/[Ll]ogs/
+unity-app/[Uu]ser[Ss]ettings/
+# file on crash reports
+sysinfo.txt
+# Unity3D generated meta files
+*.pidb.meta
+
+###
+# VS/MD solution and project files
+###
+[Ee]xportedObj/
+*.booproj
+*.csproj
+*.sln
+*.suo
+*.svd
+*.unityproj
+*.user
+*.userprefs
+*.pidb
+.DS_Store
+
+###
+# OS generated
+###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db

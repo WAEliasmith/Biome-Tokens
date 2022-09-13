@@ -4,6 +4,9 @@ import TokenCard from '../../components/TokenCard/TokenCard'
 import DualRingLoader from '../../components/Icon/DualRingLoader'
 import Navigator from '../../components/Navigator/Navigator'
 import parseNanoSecToMs from '../../utils/parseDateToMs'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import Input from '../../components/Input/Input'
+import Button from '../../components/Button/Button'
 
 export const LoaderWrapper = styled.div`
   display: flex;
@@ -12,6 +15,8 @@ export const LoaderWrapper = styled.div`
 `
 
 const CreatedTokens = ({ contract }) => {
+  const history = useHistory()
+
   const [createdTokens, setCreatedTokens] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -36,9 +41,37 @@ const CreatedTokens = ({ contract }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const [tokenId, setTokenId] = useState('')
+
+  const handleSubmit = async (e) => {
+    history.push('/token/' + tokenId)
+  }
+
+
   return (
     <Wrapper>
-      <header>Created Tokens</header>
+      <article className="w-full flex bd-how">
+        <div className="mx-auto flex flex-col">
+          <h2 className="text-3xl text-center font-bold mx-8">
+            Enter A Token ID to view
+          </h2>
+          <form className="w-full mt-4 flex flex-row items-center">
+            <Input
+              value={tokenId}
+              onChange={(e) => setTokenId(e.target.value)}
+              placeholder="Enter Token ID"
+            />
+            <Button
+              style={{ height: 55 }}
+              className="ml-4 w-max"
+              onClick={handleSubmit}
+            >
+              Search Token
+            </Button>
+          </form>
+        </div>
+      </article>
+      <header>All Tokens</header>
       {loading ? (
         <LoaderWrapper className="my-20">
           <DualRingLoader width={100} height={100} />
@@ -75,6 +108,10 @@ const CreatedTokens = ({ contract }) => {
 }
 
 const Wrapper = styled.div`
+  & > .bd-how {
+    padding: 5rem 10rem 6rem;
+    background: #e2e6e9;
+  }
   & > header {
     max-width: 85%;
     margin: 2rem auto 8rem;

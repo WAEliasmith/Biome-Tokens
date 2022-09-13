@@ -7,7 +7,7 @@ const Footer = () => {
 		<StyledFooter className="w-full flex items-center justify-between">
 			<Logo footer />
 			<a
-				href="https://github.com/Origho-precious"
+				href="https://github.com/WAEliasmith/Biome-Tokens"
 				className="flex items-center"
 			>
 				<Icon icon="github" />
