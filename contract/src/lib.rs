@@ -48,27 +48,20 @@ pub struct Series {
     price: Option<Balance>,
     // Owner of the collection
     owner_id: AccountId,
-    // the value at which whatever measured level is good
-    good_range: i128,
+    // // the value at which whatever measured level is good
+    good_range: Option<i128>,
     // the value at which whatever measured level is bad
-    bad_range: i128,
-    // the AccountId of the charity
+    bad_range: Option<i128>,
+    // // the AccountId of the charity
     charity_id: AccountId,
 
-    oracle_id: OracleId
+    // oracle_id: OracleId
 }
 
-// #[derive(BorshDeserialize, BorshSerialize)]
-// pub struct Oracle {
-//     // Value of the tracked data
-//     val: Option<i64>,
-//     // Owner of the collection
-//     owner_id: AccountId,
-// }
 
 pub type SeriesId = u64;
 pub type OracleId = String;
-pub type OracleVal = i128;
+pub type OracleVal = f64;
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]

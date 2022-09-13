@@ -16,10 +16,11 @@ impl Contract {
         metadata: TokenMetadata,
         royalty: Option<HashMap<AccountId, u32>>,
         price: Option<U128>,
-        good_range: i128,
-        bad_range: i128,
+        good_range: Option<i128>,
+        bad_range: Option<i128>,
         charity_id: AccountId,
-        oracle_id: OracleId,
+        // charity_id: Option<AccountId>,
+        // oracle_id: Option<OracleId>,
     ) {
         // TODO check oracle id exists before creating new nft
         // Measure the initial storage being used on the contract
@@ -46,17 +47,30 @@ impl Contract {
                                 id, caller
                             )),
                         }),
-                        owner_id: caller,
                         price: price.map(|p| p.into()),
+                        owner_id: caller,
                         good_range,
                         bad_range,
                         charity_id,
-                        oracle_id,
+                        // oracle_id,
                     }
                 )
                 .is_none(),
             "collection ID already exists"
         );
+        
+        //insert royalty hashmap
+        let mut series = self
+                .series_by_id
+                .get(&id)
+                .expect("Not a series");
+        if series.royalty.is_none(){
+            let mut default_royalty = HashMap::new();
+            default_royalty.insert(series.charity_id.clone(), 5 as u32);
+            
+            series.royalty = Some(default_royalty);
+            self.series_by_id.insert(&id, &series);
+        }
 
         //calculate the required storage which was the used - initial
         let required_storage_in_bytes = env::storage_usage() - initial_storage_usage;
@@ -64,6 +78,8 @@ impl Contract {
         //refund any excess storage if the user attached too much. Panic if they didn't attach enough to cover the required.
         refund_deposit(required_storage_in_bytes);
     }
+
+    
 
     /// Mint a new NFT that is part of a series. The caller must be an approved minter.
     /// The series ID must exist and if the metadata specifies a copy limit, you cannot exceed it.
@@ -154,5 +170,19 @@ impl Contract {
         } else {
             refund_deposit(required_storage_in_bytes);
         }
+    }
+
+    #[private]
+    pub fn change_media(
+        &mut self,
+        new_url: Option<String>, 
+        id: u64,
+    ){
+        env::log_str(&format!("New URL: {}", new_url.clone().unwrap_or("NO URL".to_string())));
+        let mut series = self.series_by_id.get(&id).expect("Not a series.");
+        let mut series_metadata = series.metadata;
+        series_metadata.media = new_url;
+        series.metadata = series_metadata;
+        self.series_by_id.insert(&id, &series);
     }
 }

@@ -16,17 +16,27 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
       # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: checkout repo content
+        uses: actions/checkout@v2 # checkout the repository content to github runner.
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8 #install the python needed
+      - name: execute py script # run the run.py to get the latest data
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          pip install requests
+          python contract/oracle/carbon-emission-oracle.py
+      - name: Run a multi-line script
+        working-directory: ./contract
+        run: |
+          wget https://github.com/near/near-cli-rs/releases/download/0.1.16/near-cli-0.1.16-x86_64-unknown-linux-gnu.tar.gz
+          tar xzvf near-cli-0.1.16-x86_64-unknown-linux-gnu.tar.gz
+          CarbonEmission=`python oracle/carbon-emission-oracle.py`
+          OwnerId="biome.zdefranc.testnet"
+          ./near-cli-0.1.16-x86_64-unknown-linux-gnu/near-cli execute change-method network testnet contract $OwnerId call set_oracle_value '{"oracle_id": "emissions", "val": "'$CarbonEmission'"}' --prepaid-gas '100.000 TeraGas' --attached-deposit '0 NEAR' signer $OwnerId sign-private-key --signer-public-key ed25519:89JPp9Lng5JBZsjyKFzrEeEvqAPbGcQv9keDYpnrpp81 --signer-private-key ed25519:3t7acfMwkK1yzgKX58EaEUVUUkQDaT42oph66G4RUEPXvMCiZAwMSQNZH364PvkGhyyEjPSZcbie1Z4sk13SKYa5 send

@@ -1,3 +1,5 @@
+use near_sdk::__private::Metadata;
+
 use crate::*;
 pub type TokenId = String;
 //defines the payout type we'll be returning as a part of the royalty standards.
@@ -36,6 +38,25 @@ pub struct TokenMetadata {
     pub reference_hash: Option<Base64VecU8>, // Base64-encoded sha256 hash of JSON from reference field. Required if `reference` is included.
 }
 
+// #[near_bindgen]
+// impl Contract {
+
+//     #[private]
+//     pub fn change_media(
+//         &mut self,
+//         new_url: Option<String>, 
+//         id: u64,
+//     ){
+
+//         env::log_str(&format!("New URL: {}", new_url.clone().unwrap_or("NO URL".to_string())));
+//         let mut series = self.series_by_id.get(&id).expect("Not a series.");
+//         let mut series_metadata = series.metadata;
+//         series_metadata.media = new_url;
+//         series.metadata = series_metadata;
+//         self.series_by_id.insert(&id, &series);
+//     }
+// }
+
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Token {
     // Series that the token belongs to
@@ -71,9 +92,11 @@ pub trait NonFungibleTokenMetadata {
     fn nft_metadata(&self) -> NFTContractMetadata;
 }
 
+
 #[near_bindgen]
 impl NonFungibleTokenMetadata for Contract {
     fn nft_metadata(&self) -> NFTContractMetadata {
         self.metadata.get().unwrap()
     }
 }
+

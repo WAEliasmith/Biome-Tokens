@@ -1,13 +1,8 @@
 set -e
 
-
-
-
 near create-account biome.zdefranc.testnet --masterAccount zdefranc.testnet
 
 ./build.sh
-
-pwd
 
 near deploy biome.zdefranc.testnet --wasmFile res/series.wasm
 
