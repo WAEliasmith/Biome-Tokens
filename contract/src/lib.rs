@@ -68,7 +68,7 @@ pub struct Series {
 
 pub type SeriesId = u64;
 pub type OracleId = String;
-pub type OracleVal = i128;
+pub type OracleVal = f64;
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]

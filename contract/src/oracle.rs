@@ -13,7 +13,7 @@ impl Contract {
     ){
         self.assert_contract_owner();
         assert_eq!(self.oracles_by_id.get(&oracle_id), None, "Oracle Id aready exists");
-        self.oracles_by_id.insert(&oracle_id, &val.parse::<i128>().unwrap());
+        self.oracles_by_id.insert(&oracle_id, &val.parse::<f64>().unwrap());
     }
 
     pub fn set_oracle_value(
@@ -23,7 +23,7 @@ impl Contract {
     ){
         self.assert_contract_owner();
         assert_ne!(self.oracles_by_id.get(&oracle_id), None, "Oracle Id does not exist");
-        self.oracles_by_id.insert(&oracle_id, &val.parse::<i128>().unwrap());
+        self.oracles_by_id.insert(&oracle_id, &val.parse::<f64>().unwrap());
 
         env::log_str(&format!("{}",&self.oracles_by_id.get(&oracle_id).unwrap()))
     }
