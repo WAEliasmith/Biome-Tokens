@@ -6,6 +6,7 @@ import Profile from "./pages/profile";
 import Token from "./pages/token";
 import Createdtokens from "./pages/created-tokens";
 import Mint from "./pages/minting";
+import Oracles from "./pages/oracles";
 
 const App = ({ contract, currentUser, nearConfig, wallet }) => {
   return (
@@ -17,6 +18,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
         <Route exact path="/profile" render={(props) => <Profile {...props} contract={contract} currentUser={currentUser} />} />
         <Route exact path="/token/:id" render={(props) => <Token {...props} contract={contract} currentUser={currentUser} />} />
         <Route exact path="/mint" render={(props) => <Mint {...props} contract={contract} />} />
+        <Route exact path="/oracles" render={(props) => <Oracles {...props} contract={contract} />} />
       </Switch>
       <Footer />
     </BrowserRouter>

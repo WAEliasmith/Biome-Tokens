@@ -52,8 +52,13 @@ const Home = ({ contract }) => {
 
   return (
     <Wrapper>
-      <section className="bd-intro flex items-center justify-between">
-        <article className="w-full">
+      <section className="bd-intro flex flex-col items-center justify-between">
+        <div className="w-full flex mt-10">
+          <h1 className="mx-auto" >
+            We help nature <br /> with the power of NFTs
+          </h1>
+        </div>
+        <article className="w-1/2 flex flex-row">
           <div className="container mx-auto">
             {isLoaded === false && (
               // We'll conditionally render the loading overlay if the Unity
@@ -63,11 +68,6 @@ const Home = ({ contract }) => {
               </div>
             )}
             <Unity className="unity" unityProvider={unityProvider} style={{ width: 800, height: 600 }} />
-          </div>
-          <div className="w-full flex mt-10">
-            <h1 className="mx-auto" >
-              We help nature <br /> with the power of NFTs
-            </h1>
           </div>
           {/* <Button
             style={{ height: 55 }}
@@ -85,7 +85,7 @@ const Home = ({ contract }) => {
       </section>
       <section className="bd-how py-12 flex items-center justify-between">
         <article className="flex flex-col">
-          <h2 className="mx-auto text-3xl font-bold">How It Works</h2>
+          <h2 className="mx-auto text-4xl font-bold">How It Works</h2>
           <div className="flex mt-8">
             <span>
               <Icon
