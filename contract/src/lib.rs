@@ -62,7 +62,7 @@ pub struct Series {
 #[derive(BorshDeserialize, BorshSerialize, Debug, PartialEq)]
 pub struct Oracle {
     oracle_val: f64,
-
+    unit: String,
     oracle_name: String
 }
 

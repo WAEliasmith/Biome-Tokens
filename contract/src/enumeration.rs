@@ -21,6 +21,7 @@ pub struct JsonOracle {
     oracle_id: String,
     oracle_val: f64,
     oracle_name: String,
+    oracle_unit: String
 }
 
 #[near_bindgen]
@@ -164,7 +165,8 @@ impl Contract {
             Some(JsonOracle {
                 oracle_id: id,
                 oracle_val: oracles.oracle_val,
-                oracle_name: oracles.oracle_name
+                oracle_name: oracles.oracle_name,
+                oracle_unit: oracles.unit
             })
         } else {
             //if there isn't a series, we'll return None

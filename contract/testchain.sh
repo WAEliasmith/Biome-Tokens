@@ -8,7 +8,7 @@ near deploy biome.zdefranc.testnet --wasmFile res/series.wasm
 
 near call biome.zdefranc.testnet new_default_meta "{\"owner_id\": \"biome.zdefranc.testnet\"}"  --accountId biome.zdefranc.testnet
 
-near call biome.zdefranc.testnet add_oracle "{\"oracle_id\": \"emissions\", \"oracle_name\": \"Carbon Emissions\", \"val\": \"4\"}" --accountId biome.zdefranc.testnet
+near call biome.zdefranc.testnet add_oracle "{\"oracle_id\": \"emissions\", \"oracle_name\": \"Carbon Emissions\", \"val\": \"4\", \"unit\": \"mol/m²\"}" --accountId biome.zdefranc.testnet
 
 near call biome.zdefranc.testnet set_oracle_value "{\"oracle_id\": \"emissions\", \"val\": \"4\"}" --accountId biome.zdefranc.testnet
 near call biome.zdefranc.testnet set_oracle_value "{\"oracle_id\": \"emissions\", \"val\": \"4\"}" --accountId biome.zdefranc.testnet

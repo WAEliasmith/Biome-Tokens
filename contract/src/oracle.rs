@@ -8,11 +8,13 @@ impl Contract {
         &mut self,
         oracle_id: OracleId,
         oracle_name: String,
-        val: String
+        val: String,
+        unit: String
     ){
         self.assert_contract_owner();
         assert_eq!(self.oracles_by_id.get(&oracle_id), None, "Oracle Id aready exists");
         self.oracles_by_id.insert(&oracle_id, &Oracle { 
+            unit,
             oracle_val: (val.parse::<f64>().unwrap()), 
             oracle_name: (oracle_name) 
         });
