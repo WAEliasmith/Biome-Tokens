@@ -38,6 +38,4 @@ jobs:
           npm install -g near-cli
           CarbonEmission=`python oracle/carbon-emission-oracle.py`
           OwnerId="biome.zdefranc.testnet"
-          near call $OwnerId set_oracle_value "{\"oracle_id\": \"emissions\", \"val\": \"$CarbonEmission\"}" --accountId $OwnerId
-          near call biome.zdefranc.testnet get_oracle_value "{\"oracle_id\": \"emissions\"}" --accountId biome.zdefranc.testnet
-          
+          near-cli execute change-method network testnet contract $OwnerId call set_oracle_value '{"oracle_id": "emissions", "val": "'$CarbonEmission'"}' --prepaid-gas '100.000 TeraGas' --attached-deposit '0 NEAR' signer $OwnerId sign-private-key --signer-public-key ed25519:89JPp9Lng5JBZsjyKFzrEeEvqAPbGcQv9keDYpnrpp81 --signer-private-key ed25519:3t7acfMwkK1yzgKX58EaEUVUUkQDaT42oph66G4RUEPXvMCiZAwMSQNZH364PvkGhyyEjPSZcbie1Z4sk13SKYa5 send
