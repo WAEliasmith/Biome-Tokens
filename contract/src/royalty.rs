@@ -1,4 +1,4 @@
-use std::default;
+use std::{default, convert::TryInto};
 
 use crate::*;
 
@@ -19,7 +19,7 @@ pub trait NonFungibleTokenCore {
 
     fn update_series_royalty(
         &mut self,
-        val: i128,
+        val: f64,
         id: u64
     );
 }
@@ -177,7 +177,7 @@ impl NonFungibleTokenCore for Contract {
     #[private]
     fn update_series_royalty(
         &mut self,
-        tracked_val: i128,
+        tracked_val: f64,
         id: u64
     ) {
         env::log_str(&format!("Value: {}, ID: {}",tracked_val, id));
@@ -185,19 +185,19 @@ impl NonFungibleTokenCore for Contract {
         let mut series = self.series_by_id.get(&id).expect("Not a series.");
         
         //calculate royalties to be taken by "charity" assuming charity and owner are the only 2
-        let mut charity_royalty_perc = 100*(tracked_val-series.good_range.unwrap())/(series.bad_range.unwrap()-series.good_range.unwrap());
-        if charity_royalty_perc > 100 {
-            charity_royalty_perc = 100
-        } else if charity_royalty_perc < 0 {
-            charity_royalty_perc = 0
+        let mut charity_royalty_perc = 100.0*(tracked_val-series.good_range.unwrap())/(series.bad_range.unwrap()-series.good_range.unwrap());
+        if charity_royalty_perc > 100.0 {
+            charity_royalty_perc = 100.0
+        } else if charity_royalty_perc < 0.0 {
+            charity_royalty_perc = 0.0
         }
         let charity_account_id = series.charity_id.clone();
         let mut royalties = series.royalty.unwrap();
-        royalties.insert(charity_account_id.clone(), charity_royalty_perc.try_into().unwrap());
+        royalties.insert(charity_account_id.clone(), charity_royalty_perc as u32);
         // TODO this only works for one royalty
         for (k, v) in royalties.iter_mut() {
             if k != &charity_account_id {
-                *v = (1-charity_royalty_perc).try_into().unwrap();
+                *v = (100-(charity_royalty_perc as u32)).try_into().unwrap();
             }
         }
         series.royalty = Some(royalties);
