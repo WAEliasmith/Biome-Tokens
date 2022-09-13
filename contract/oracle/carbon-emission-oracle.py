@@ -23,5 +23,5 @@ else:
 print(average_emissions)
 
 
-# sys.stdout.write(str(average_emissions))
-# sys.exit(0)
+sys.stdout.write(str(average_emissions))
+sys.exit(0)
