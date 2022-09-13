@@ -1,3 +1,5 @@
+use near_sdk::__private::Metadata;
+
 use crate::*;
 pub type TokenId = String;
 //defines the payout type we'll be returning as a part of the royalty standards.
@@ -77,3 +79,13 @@ impl NonFungibleTokenMetadata for Contract {
         self.metadata.get().unwrap()
     }
 }
+
+// #[near_bindgen]
+// impl TokenMetadata for Contract{
+//     fn change_media(
+//         &mut self,
+//         new_url: Option<String>, 
+//     ){
+//         env::log_str("currently adding changing media URL");
+//     }
+// }
