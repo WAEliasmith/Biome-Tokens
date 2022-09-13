@@ -113,7 +113,7 @@ impl Contract {
     pub(crate) fn assert_contract_owner(&mut self) {
         assert!(
             self.owner_id == env::predecessor_account_id(),
-            "only contract owner"
+            "only contract owner may call this method"
         )
     }
 

@@ -15,8 +15,13 @@ impl Contract {
         id: u64,
         metadata: TokenMetadata,
         royalty: Option<HashMap<AccountId, u32>>,
-        price: Option<U128>
+        price: Option<U128>,
+        good_range: i128,
+        bad_range: i128,
+        charity_id: AccountId,
+        oracle_id: OracleId,
     ) {
+        // TODO check oracle id exists before creating new nft
         // Measure the initial storage being used on the contract
         let initial_storage_usage = env::storage_usage();
 
@@ -26,7 +31,6 @@ impl Contract {
             self.approved_creators.contains(&caller) == true,
             "only approved creators can add a type"
         );
-
         // Insert the series and ensure it doesn't already exist
         require!(
             self.series_by_id
@@ -44,6 +48,10 @@ impl Contract {
                         }),
                         owner_id: caller,
                         price: price.map(|p| p.into()),
+                        good_range,
+                        bad_range,
+                        charity_id,
+                        oracle_id,
                     }
                 )
                 .is_none(),
