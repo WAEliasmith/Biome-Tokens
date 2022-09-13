@@ -34,7 +34,7 @@ jobs:
           python contract/oracle/carbon-emission-oracle.py
       - name: Run a multi-line script
         run: |
-          CarbonEmission=`python oracle/carbon-emission-oracle.py`
+          CarbonEmission=`python contract/oracle/carbon-emission-oracle.py`
           OwnerId="biome.zdefranc.testnet"
           near call $OwnerId set_oracle_value "{\"oracle_id\": \"emissions\", \"val\": \"$CarbonEmission\"}" --accountId $OwnerId
           near call biome.zdefranc.testnet get_oracle_value "{\"oracle_id\": \"emissions\"}" --accountId biome.zdefranc.testnet
