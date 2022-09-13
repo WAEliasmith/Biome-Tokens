@@ -15,6 +15,14 @@ pub struct JsonSeries {
     owner_id: AccountId,
 }
 
+#[derive(BorshDeserialize, BorshSerialize, Serialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct JsonOracle {
+    oracle_id: String,
+    oracle_val: f64,
+    oracle_name: String,
+}
+
 #[near_bindgen]
 impl Contract {
     //Query for the total supply of NFTs on the contract
@@ -122,6 +130,41 @@ impl Contract {
                 metadata: series.metadata,
                 royalty: series.royalty,
                 owner_id: series.owner_id,
+            })
+        } else {
+            //if there isn't a series, we'll return None
+            None
+        }
+    }
+
+    // Paginate through all the oracles on the contract and return the a vector of JsonSeries
+    pub fn get_oracles(&self, from_index: Option<U128>, limit: Option<u64>) -> Vec<JsonOracle> {
+        //where to start pagination - if we have a from_index, we'll use that - otherwise start from 0 index
+        let start = u128::from(from_index.unwrap_or(U128(0)));
+
+        //iterate through each oracle using an iterator
+        self.oracles_by_id
+            .keys()
+            //skip to the index we specified in the start variable
+            .skip(start as usize)
+            //take the first "limit" elements in the vector. If we didn't specify a limit, use 50
+            .take(limit.unwrap_or(50) as usize)
+            //we'll map the oracle IDs which are strings into Json Series
+            .map(|oracle_id| self.get_oracle_details(oracle_id.clone()).unwrap())
+            //since we turned the keys into an iterator, we need to turn it back into a vector to return
+            .collect()
+    }
+
+    // get info for a specific oracle
+    pub fn get_oracle_details(&self, id: String) -> Option<JsonOracle> {
+        //get the series from the map
+        let oracles = self.oracles_by_id.get(&id);
+        //if there is some series, we'll return the series
+        if let Some(oracles) = oracles {
+            Some(JsonOracle {
+                oracle_id: id,
+                oracle_val: oracles.oracle_val,
+                oracle_name: oracles.oracle_name
             })
         } else {
             //if there isn't a series, we'll return None

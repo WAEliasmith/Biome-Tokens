@@ -16,11 +16,11 @@ impl Contract {
         metadata: TokenMetadata,
         royalty: Option<HashMap<AccountId, u32>>,
         price: Option<U128>,
-        good_range: Option<i128>,
-        bad_range: Option<i128>,
+        good_range: Option<f64>,
+        bad_range: Option<f64>,
         charity_id: AccountId,
         // charity_id: Option<AccountId>,
-        // oracle_id: Option<OracleId>,
+        oracle_id: OracleId,
     ) {
         // TODO check oracle id exists before creating new nft
         // Measure the initial storage being used on the contract
@@ -52,7 +52,7 @@ impl Contract {
                         good_range,
                         bad_range,
                         charity_id,
-                        // oracle_id,
+                        oracle_id,
                     }
                 )
                 .is_none(),

@@ -49,13 +49,21 @@ pub struct Series {
     // Owner of the collection
     owner_id: AccountId,
     // // the value at which whatever measured level is good
-    good_range: Option<i128>,
+    good_range: Option<f64>,
     // the value at which whatever measured level is bad
-    bad_range: Option<i128>,
+    bad_range: Option<f64>,
     // // the AccountId of the charity
     charity_id: AccountId,
 
-    // oracle_id: OracleId
+    oracle_id: OracleId
+}
+
+// Represents the oracke type.
+#[derive(BorshDeserialize, BorshSerialize, Debug, PartialEq)]
+pub struct Oracle {
+    oracle_val: f64,
+
+    oracle_name: String
 }
 
 
@@ -88,7 +96,7 @@ pub struct Contract {
     pub metadata: LazyOption<NFTContractMetadata>,
 
     // //keeps track oracle struct for a given oracle id
-    pub oracles_by_id: UnorderedMap<OracleId,OracleVal>
+    pub oracles_by_id: UnorderedMap<OracleId,Oracle>
 }
 
 /// Helper structure for keys of the persistent collections.
