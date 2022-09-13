@@ -55,7 +55,7 @@ pub struct Series {
     // // the AccountId of the charity
     charity_id: AccountId,
 
-    oracle_id: OracleId
+    // oracle_id: OracleId
 }
 
 
