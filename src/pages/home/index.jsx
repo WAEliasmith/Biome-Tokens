@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom'
 import { decodeArgs, txReturnArgsFromHash } from '../../utils/near'
 import useQuery from '../../hooks/useQuery'
 import TokenIdModal from '../../components/Modal/tokenId'
+import { Unity, useUnityContext } from "react-unity-webgl";
 
 const txFee = Big(0.5)
   .times(10 ** 24)
@@ -18,41 +19,59 @@ const GAS = Big(3)
   .toFixed()
 
 const Home = ({ contract }) => {
-  const [tokenId, setTokenId] = useState('')
-  const [homeBtn, setHomeBtn] = useState('Create A Token')
-  const [created, setCreated] = useState('')
+  const { sendMessage, unityProvider, isLoaded, loadingProgression } = useUnityContext({
+    loaderUrl: "Build/Build.loader.js",
+    dataUrl: "Build/Build.data",
+    frameworkUrl: "Build/Build.framework.js",
+    codeUrl: "Build/Build.wasm",
+  });
+  // We'll round the loading progression to a whole number to represent the
+  // percentage of the Unity Application that has loaded.
+  const loadingPercentage = Math.round(loadingProgression * 100);
+
+  useEffect(() => {
+    if(isLoaded === true){
+      sendMessage("Game Controller", "SendToController", "456");
+    }
+  }, [isLoaded])
+
+  // const [homeBtn, setHomeBtn] = useState('Create A Token')
+  // const [created, setCreated] = useState('')
   const [modal, setModal] = useState(false)
   const query = useQuery()
   const hash = query.get('transactionHashes')
   const history = useHistory()
 
-  const createNewGame = async () => {
-    try {
-      await contract.createNewGame({}, GAS, txFee)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const handleSubmit = async (e) => {
-    history.push('/token/' + tokenId)
-  }
-
-  const handleShowGameId = (arg) => {
-    setCreated(arg)
-    setModal(true)
-  }
+  // const createNewGame = async () => {
+  //   try {
+  //     await contract.createNewGame({}, GAS, txFee)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   return (
     <Wrapper>
-      <section className="bd-intro mx-auto flex items-center justify-between">
-        <article className="w-1/2">
-          <h1>
-            We help nature <br /> with the power of <br /> NFTs
-          </h1>
-          <Button
+      <section className="bd-intro flex items-center justify-between">
+        <article className="w-full">
+          <div className="container mx-auto">
+            {isLoaded === false && (
+              // We'll conditionally render the loading overlay if the Unity
+              // Application is not loaded.
+              <div className="loading-overlay">
+                <p>Loading... ({loadingPercentage}%)</p>
+              </div>
+            )}
+            <Unity className="unity" unityProvider={unityProvider} style={{ width: 800, height: 600 }} />
+          </div>
+          <div className="w-full flex mt-10">
+            <h1 className="mx-auto" >
+              We help nature <br /> with the power of NFTs
+            </h1>
+          </div>
+          {/* <Button
             style={{ height: 55 }}
-            className="my-8"
+            className="my-12"
             onClick={() => {
               setHomeBtn('Loading...')
               createNewGame().then((val) => {
@@ -61,16 +80,12 @@ const Home = ({ contract }) => {
             }}
           >
             {homeBtn}
-          </Button>
-          <Link to="/">How it works ?</Link>
-        </article>
-        <article className="w-1/2">
-          <Icon size={650} className="-ml-10" icon="header" />
+          </Button> */}
         </article>
       </section>
       <section className="bd-how py-12 flex items-center justify-between">
-        <article className="w-1/2">
-          <h2 className="text-3xl font-bold">How Does It Work?</h2>
+        <article className="flex flex-col">
+          <h2 className="mx-auto text-3xl font-bold">How It Works</h2>
           <div className="flex mt-8">
             <span>
               <Icon
@@ -132,27 +147,8 @@ const Home = ({ contract }) => {
             </div>
           </div>
         </article>
-        <article className="ml-32 w-1/2">
-          <h2 className="text-3xl text-center font-bold mb-16">
-            Enter A Token ID to view
-          </h2>
-          <form className="w-full flex flex-col items-center">
-            <Input
-              value={tokenId}
-              onChange={(e) => setTokenId(e.target.value)}
-              placeholder="Enter Token ID"
-            />
-            <Button
-              style={{ height: 55 }}
-              className="mt-12 w-max"
-              onClick={handleSubmit}
-            >
-              Search Token
-            </Button>
-          </form>
-        </article>
       </section>
-      <TokenIdModal
+      {/* <TokenIdModal
         id={created}
         open={modal}
         handleClose={() => {
@@ -163,14 +159,13 @@ const Home = ({ contract }) => {
           
           setModal(false)
         }}
-      />
+      /> */}
     </Wrapper>
   )
 }
 
 const Wrapper = styled.div`
   & > .bd-intro {
-    max-width: 75%;
     h1 {
       font-weight: 800;
       font-size: 56px;

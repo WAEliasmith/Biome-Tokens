@@ -13,7 +13,7 @@ const Profile = ({ contract, currentUser }) => {
     })
 
     profile.forEach(async (el) => {
-      const data = await contract?.getGameDetails({ tokenId: el })
+      const data = await contract?.getGameDetails({ gameId: el })
       setTokens((prev) => [data[0], ...prev])
     })
   }

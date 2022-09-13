@@ -9947,6 +9947,11 @@ react-svg@^14.0.15:
     "@types/prop-types" "^15.7.4"
     prop-types "^15.7.2"
 
+react-unity-webgl@^9.0.4:
+  version "9.0.4"
+  resolved "https://registry.yarnpkg.com/react-unity-webgl/-/react-unity-webgl-9.0.4.tgz#330aaba0962f2d8574e4bfb5785a4739ebd75b97"
+  integrity sha512-3Sy0t1eSlSWGQ56asyLoMvjGhfdUAjpWzjwR8TSW/+EoDJdIN08/el2lVzTdTNlgLrMt31YWYRxcyBb8oEgYHw==
+
 react@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
