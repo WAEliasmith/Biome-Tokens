@@ -58,6 +58,14 @@ pub struct Series {
     oracle_id: OracleId
 }
 
+// Represents the oracke type.
+#[derive(BorshDeserialize, BorshSerialize, Debug, PartialEq)]
+pub struct Oracle {
+    oracle_val: f64,
+
+    oracle_name: String
+}
+
 
 pub type SeriesId = u64;
 pub type OracleId = String;
@@ -88,7 +96,7 @@ pub struct Contract {
     pub metadata: LazyOption<NFTContractMetadata>,
 
     // //keeps track oracle struct for a given oracle id
-    pub oracles_by_id: UnorderedMap<OracleId,OracleVal>
+    pub oracles_by_id: UnorderedMap<OracleId,Oracle>
 }
 
 /// Helper structure for keys of the persistent collections.
