@@ -22,10 +22,19 @@ jobs:
     steps:
 
       # Runs a set of commands using the runners shell
+      - name: checkout repo content
+        uses: actions/checkout@v2 # checkout the repository content to github runner.
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8 #install the python needed
+      - name: execute py script # run the run.py to get the latest data
+        run: |
+          python contract/oracle/carbon-emission-oracle.py
       - name: Run a multi-line script
         run: |
-          echo pwd
-          cd ..
-          echo ls 
-          cd contract
+          CarbonEmission=`python oracle/carbon-emission-oracle.py`
+          OwnerId="biome.zdefranc.testnet"
+          near call $OwnerId set_oracle_value "{\"oracle_id\": \"emissions\", \"val\": \"$CarbonEmission\"}" --accountId $OwnerId
+          near call biome.zdefranc.testnet get_oracle_value "{\"oracle_id\": \"emissions\"}" --accountId biome.zdefranc.testnet
           
