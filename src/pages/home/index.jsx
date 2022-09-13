@@ -31,9 +31,10 @@ const Home = ({ contract }) => {
 
   useEffect(() => {
     if(isLoaded === true){
-      sendMessage("Game Controller", "SendToController", "456");
+      const message = "{\"tokens\":[{\"pollution\":1,\"name\":\"name\",\"oracle\":\"oraclename\",\"url\":\"https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350\"},{\"pollution\":0,\"name\":\"name2\",\"oracle\":\"oraclename2\",\"url\":\"https://raw.githubusercontent.com/gist/creaktive/781249/raw/2ea60f845a536a29ba15ca235cb52c465cdf4e4c/trollface.png\"}]}"
+      sendMessage("MapHandler", "SendToController", message);
     }
-  }, [isLoaded])
+  }, [isLoaded, sendMessage])
 
   // const [homeBtn, setHomeBtn] = useState('Create A Token')
   // const [created, setCreated] = useState('')

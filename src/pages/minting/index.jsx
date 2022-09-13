@@ -44,12 +44,12 @@ const Mint = ({ contract }) => {
 
   return (
     <Wrapper>
-      <section className="bd-how py-12 flex items-center justify-between">
-        <article className="ml-32 w-1/2">
+      <section className="w-full bd-how py-12 flex items-center justify-between">
+        <article className="mx-auto">
           <h2 className="text-3xl text-center font-bold mb-16">
             Minting
           </h2>
-          <form className="w-full flex flex-col items-center">
+          <form className="flex flex-col items-center">
             <Input
               value={tokenId}
               onChange={(e) => setTokenId(e.target.value)}
@@ -90,10 +90,11 @@ const Mint = ({ contract }) => {
               onChange={(e) => setOracleId(e.target.value)}
               placeholder="Enter Oracle Id"
             />
+            <div className="my-4"> Enter 3 image Urls, seperated by commas. Put the healthy image first, and the unhealthy image last</div>
             <Input
               value={urls}
               onChange={(e) => setUrls(e.target.value.split(","))}
-              placeholder="Enter all image Urls, seperated by commas"
+              placeholder="Enter urls here"
             />
             <Button
               style={{ height: 55 }}
