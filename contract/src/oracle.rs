@@ -1,4 +1,4 @@
-use std::convert::TryInto;
+// use std::convert::TryInto;
 
 use serde_json::to_string;
 
@@ -28,3 +28,4 @@ impl Contract {
         env::log_str(&format!("{}",&self.oracles_by_id.get(&oracle_id).unwrap()))
     }
 }
+
