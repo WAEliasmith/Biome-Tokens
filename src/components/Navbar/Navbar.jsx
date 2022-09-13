@@ -51,6 +51,23 @@ const Navbar = ({ currentUser, nearConfig, wallet }) => {
           >
             Find Tokens
           </NavLink>
+          <NavLink
+            activeClassName="active-link"
+            className="mx-8"
+            to="#"
+            onClick={(e) => {
+              console.log("window.location.href", window.location.href)
+              e.preventDefault();
+              //change tabs with reload if coming from unity game
+              if(window.location.href === "http://localhost:3000/"){
+                window.location.href = "/oracles"
+              } else {
+                history.push("/oracles");
+              }
+            }}
+          >
+            View Oracles
+          </NavLink>
         </div>
         <div className="flex ml-16 items-center">
           <span className="near-line bg-gray-500 mr-12" />

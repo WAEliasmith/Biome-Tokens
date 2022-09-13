@@ -21,6 +21,8 @@ const Mint = ({ contract }) => {
   const [badRange, setBadRange] = useState('')
   const [charityId, setCharityId] = useState('')
   const [oracleId, setOracleId] = useState('')
+  const [urls, setUrls] = useState([])
+
 
   const MintToken = async () => {
     const mintData = {
@@ -88,7 +90,11 @@ const Mint = ({ contract }) => {
               onChange={(e) => setOracleId(e.target.value)}
               placeholder="Enter Oracle Id"
             />
-
+            <Input
+              value={urls}
+              onChange={(e) => setUrls(e.target.value.split(","))}
+              placeholder="Enter all image Urls, seperated by commas"
+            />
             <Button
               style={{ height: 55 }}
               className="mt-12 w-max"
