@@ -7,8 +7,8 @@ public class NFTHandler : MonoBehaviour
   public GameObject Player = null;
   public GameObject InfoPanel = null;
 
-
   public float pollution = 0f;
+  public string id = "";
   public string name = "name";
   public string oracle = "oracle";
   public string url = "https://upload.wikimedia.org/wikipedia/pt/7/73/Trollface.png";
@@ -33,6 +33,7 @@ public class NFTHandler : MonoBehaviour
       InfoPanel.GetComponent<InfoPanel>().pollution = pollution;
       InfoPanel.GetComponent<InfoPanel>().name = name;
       InfoPanel.GetComponent<InfoPanel>().oracle = oracle;
+      InfoPanel.GetComponent<InfoPanel>().id = id;
       InfoPanel.GetComponent<InfoPanel>().fade += 0.1f;
       InfoPanel.GetComponent<InfoPanel>().Download(url);
     }

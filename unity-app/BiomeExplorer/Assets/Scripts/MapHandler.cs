@@ -38,6 +38,7 @@ public class MapHandler : MonoBehaviour
     public float y;
     public float pollution;
     public string name;
+    public string id;
     public string oracle;
     public string url;
 
@@ -85,6 +86,7 @@ public class MapHandler : MonoBehaviour
     public float pollution;
     public string name;
     public string url;
+    public string id;
   }
 
   public class TokenInfoCollection {
@@ -95,7 +97,7 @@ public class MapHandler : MonoBehaviour
   {
     start = true;
 
-    message = "{\"tokens\":[{\"pollution\":1,\"name\":\"name\",\"oracle\":\"oraclename\",\"url\":\"https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350\"},{\"pollution\":0,\"name\":\"name2\",\"oracle\":\"oraclename2\",\"url\":\"https://raw.githubusercontent.com/gist/creaktive/781249/raw/2ea60f845a536a29ba15ca235cb52c465cdf4e4c/trollface.png\"}]}";
+    //message = "{\"tokens\":[{\"pollution\":1,\"name\":\"name\",\"oracle\":\"oraclename\",\"url\":\"https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350\"},{\"pollution\":0,\"name\":\"name2\",\"oracle\":\"oraclename2\",\"url\":\"https://raw.githubusercontent.com/gist/creaktive/781249/raw/2ea60f845a536a29ba15ca235cb52c465cdf4e4c/trollface.png\"}]}";
     //message = "{\"tokens\":[{\"pollution\":1,\"name\":\"name\",\"oracle\":\"oraclename\",\"url\":\"https://static.wikia.nocookie.net/jerma-lore/images/e/e3/JermaSus.jpg/revision/latest?cb=20201206225609\"},{\"pollution\":0,\"name\":\"name2\",\"oracle\":\"oraclename2\",\"url\":\"https://wompampsupport.azureedge.net/fetchimage?siteId=7575&v=2&jpgQuality=100&width=700&url=https%3A%2F%2Fi.kym-cdn.com%2Fphotos%2Fimages%2Fnewsfeed%2F002%2F349%2F699%2F077.jpg\"}]}";
     
     int dupeData = 20;
@@ -108,6 +110,8 @@ public class MapHandler : MonoBehaviour
         NFT t = new NFT();
         t.pollution = tokenCollection.tokens[k].pollution;
         t.name = tokenCollection.tokens[k].name;
+        t.id = tokenCollection.tokens[k].id;
+
         t.oracle = tokenCollection.tokens[k].oracle;
         t.url = tokenCollection.tokens[k].url;
 
@@ -142,6 +146,7 @@ public class MapHandler : MonoBehaviour
       GameObject p = Instantiate(NFTprefab, new Vector3(t.x,t.y,-0.5f), Quaternion.identity);
       p.GetComponent<NFTHandler>().pollution = t.pollution;
       p.GetComponent<NFTHandler>().name = t.name;
+      p.GetComponent<NFTHandler>().id = t.id;
       p.GetComponent<NFTHandler>().oracle = t.oracle;
       p.GetComponent<NFTHandler>().url = t.url;
     }
@@ -151,9 +156,9 @@ public class MapHandler : MonoBehaviour
   void Start()
   {
     //random seed
-    seed = UnityEngine.Random.Range(0,1000000);
+    seed = 0; //UnityEngine.Random.Range(0,1000000);
 
-    gameObject.SendMessage("SendToController", "start2");
+    //gameObject.SendMessage("SendToController", "start2");
   }
 
   void DetectPlayerTile(){

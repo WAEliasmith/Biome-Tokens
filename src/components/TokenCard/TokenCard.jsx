@@ -8,10 +8,10 @@ const TokenCard = ({
   creator,
   startDate,
   endDate,
-  players,
+  pollution,
   id,
   createdAt,
-  status,
+  title,
 }) => {
   const [counter, setCounter] = useState('00:00')
 
@@ -43,11 +43,6 @@ const TokenCard = ({
   return (
     <Wrapper className=" px-8 py-6">
       <div>
-        {status === 1 && (
-          <div className="mb-10 flex justify-center">
-            <Timer time={counter} />
-          </div>
-        )}
         <div>
           <h3 className="text-lg font-medium">Creator: {creator}</h3>
           {createdAt && (
@@ -66,7 +61,7 @@ const TokenCard = ({
               Ends At: {dateFormatter(endDate)}
             </h3>
           )}
-          <h3 className="text-lg font-medium mt-3 mb-6">Players: {players}</h3>
+          <h3 className="text-lg font-medium mt-3 mb-6">title: {title}</h3>
         </div>
       </div>
       <div>

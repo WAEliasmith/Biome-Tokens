@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME || "dev-1641682453576-30872819216475";
+const CONTRACT_NAME =  "biome.zdefranc.testnet"; // test contract: "dev-1641682453576-30872819216475";
 
 export default function getConfig(env) {
   switch (env) {

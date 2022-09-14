@@ -9,6 +9,8 @@ public class InfoPanel : MonoBehaviour
   public float pollution = 3f;
   public string name = "1";
   public string oracle = "2";
+  public string id = "1";
+
 
   public Text NameText = null;
   public Text PollutionText = null;
@@ -56,7 +58,7 @@ IEnumerator DownloadImage(string MediaUrl)
     
     if (Input.GetKeyDown(KeyCode.Return) && fade > 0.6f)
     {
-      Application.OpenURL("http://localhost/3000/token" + name);
+      Application.OpenURL("http://localhost:3000/token/" + id);
     }
   }
 }

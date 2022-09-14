@@ -1,70 +1,102 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import TokenCard from '../../components/TokenCard/TokenCard'
+import DualRingLoader from '../../components/Icon/DualRingLoader'
 import Navigator from '../../components/Navigator/Navigator'
 import parseNanoSecToMs from '../../utils/parseDateToMs'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
+import Input from '../../components/Input/Input'
+import Button from '../../components/Button/Button'
+
+export const LoaderWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
 const Profile = ({ contract, currentUser }) => {
-  const [tokens, setTokens] = useState([])
+  const history = useHistory()
 
-  const getProfile = async () => {
-    const profile = await contract?.getProfileDetails({
-      account: currentUser?.accountId,
-    })
+  const [createdTokens, setCreatedTokens] = useState(null)
+  const [loading, setLoading] = useState(false)
 
-    profile.forEach(async (el) => {
-      const data = await contract?.getGameDetails({ gameId: el })
-      setTokens((prev) => [data[0], ...prev])
-    })
+  async function getCreatedGames() {
+    try {
+      const pages = await contract.nft_tokens_for_owner({ account_id: currentUser.accountId})
+      console.log("test result: ", pages)
+      return pages
+    } catch (error) {
+      console.log("test error: ", error)
+      return error.message
+    }
+  }
+
+  const assignCreatedTokens = () => {
+    getCreatedGames()
+      .then((res) => {setCreatedTokens(res)})
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => {
-    if (currentUser) {
-      getProfile()
-    }
+    setLoading(true)
+    assignCreatedTokens()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  console.log(tokens)
+  const [tokenId, setTokenId] = useState('')
+
+  const handleSubmit = async (e) => {
+    history.push('/token/' + tokenId)
+  }
+
 
   return (
     <Wrapper>
-      <header>Profile</header>
-      <main className="my-20 mx-auto grid grid-cols-2 gap-10">
-        {
-          tokens?.map((el) => {
-            if (el) {
-              return (
-                <TokenCard
-                  key={el.id}
-                  id={el.id}
-                  creator={el.createdBy}
-                  startDate={
-                    el.started > 0 && new Date(parseNanoSecToMs(el.started))
-                  }
-                  endDate={el.ended > 0 && new Date(parseNanoSecToMs(el.ended))}
-                  players={el.players}
-                  contract={contract}
-                  currentUser={currentUser}
-                  status={el.status}
-                  createdAt={
-                    el.createdAt > 0 && new Date(parseNanoSecToMs(el.createdAt))
-                  }
-                  variant="completed"
-                />
-              )
-            }
-
-            return null
-          })
-        }
-      </main>
-      <Navigator pageNum={1} next={false} prev={false} />
+      <article className="w-full flex bd-how">
+        <div className="mx-auto flex flex-col">
+        </div>
+      </article>
+      <header>All Tokens</header>
+      {loading ? (
+        <LoaderWrapper className="my-20">
+          <DualRingLoader width={100} height={100} />
+        </LoaderWrapper>
+      ) : (
+        <main className="my-20 mx-auto grid grid-cols-3 gap-10">
+          {
+            createdTokens != null &&
+            createdTokens.map((el) => {
+            console.log(el)
+            return (
+              <TokenCard
+                key={el.series_id}
+                id={el.series_id}
+                createdAt={
+                  el.metadata.issued_at > 0 && new Date(parseNanoSecToMs(el.metadata.issued_at))
+                }
+                creator={el.owner_id}
+                startDate={
+                  el.metadata.starts_at > 0 && new Date(parseNanoSecToMs(el.metadata.starts_at))
+                }
+                endDate={el.metadata.expires_at > 0 && new Date(parseNanoSecToMs(el.metadata.expires_at))}
+                media={el.metadata.media}
+                contract={contract}
+                title={el.metadata.title}
+              />
+            )
+          })}
+        </main>
+      )}
+      <Navigator pageNum={1} next prev={false} />
     </Wrapper>
   )
 }
 
 const Wrapper = styled.div`
+  & > .bd-how {
+    padding: 5rem 10rem 6rem;
+    background: #e2e6e9;
+  }
   & > header {
     max-width: 85%;
     margin: 2rem auto 8rem;
@@ -78,10 +110,8 @@ const Wrapper = styled.div`
     border: 14px solid #e3e3e3;
     border-radius: 8px;
   }
-
   & > main {
     max-width: 85%;
-
     h1 {
       font-weight: 800;
       font-size: 56px;
@@ -90,7 +120,6 @@ const Wrapper = styled.div`
       color: #1e1b1b;
     }
   }
-
   & > .bd-how {
     padding: 5rem 10rem 6rem;
     background: #e2e6e9;

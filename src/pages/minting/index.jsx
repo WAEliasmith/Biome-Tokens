@@ -13,32 +13,42 @@ const GAS = Big(3)
   .toFixed()
 
 const Mint = ({ contract }) => {
-  const [tokenId, setTokenId] = useState('')
-  const [metadata, setMetadata] = useState('')
-  const [royalty, setRoyalty] = useState('')
-  const [price, setPrice] = useState('')
-  const [goodRange, setGoodRange] = useState('')
-  const [badRange, setBadRange] = useState('')
-  const [charityId, setCharityId] = useState('')
-  const [oracleId, setOracleId] = useState('')
-  const [urls, setUrls] = useState([])
+  const [tokenId, setTokenId] = useState("")
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [royalty, setRoyalty] = useState("")
+  const [price, setPrice] = useState("")
+  const [goodRange, setGoodRange] = useState("")
+  const [badRange, setBadRange] = useState("")
+  const [charityId, setCharityId] = useState("")
+  const [oracleId, setOracleId] = useState("")
+  const [urls, setUrls] = useState("")
+  const [copies, setCopies] = useState("")
 
 
   const MintToken = async () => {
-    const mintData = {
-      id: tokenId,
-      metadata: metadata,
-      royalty: royalty,
-      price: price,
-      good_range: goodRange,
-      bad_range: badRange,
-      charity_id: charityId,
-      oracle_id: oracleId,
-    }
+    console.log("test minting start")
     try {
-      //await contract.Mint(mintData, GAS, txFee)
+      const metadata = {
+        title: title,
+        description: description,
+        copies: parseInt(copies),
+      }
+      console.log("test minting continue: ", metadata)
+
+      var test = await contract.create_series(
+        { id: parseInt(tokenId),
+          metadata: metadata,
+          charity_id: charityId,
+          oracle_id: oracleId,
+          good_range: parseFloat(goodRange),
+          bad_range: parseFloat(badRange),
+          all_media: urls,
+          price: price + "000000000000000000000000",
+          }, GAS, txFee)
+      console.log("test minting: ", test)
     } catch (error) {
-      console.log(error)
+      console.log("test: ", error)
     }
   }
 
@@ -56,9 +66,19 @@ const Mint = ({ contract }) => {
               placeholder="Enter Token ID"
             />
             <Input
-              value={metadata}
-              onChange={(e) => setMetadata(e.target.value)}
-              placeholder="Enter Metadata"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter Title"
+            />
+            <Input
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter Description"
+            />
+            <Input
+              value={copies}
+              onChange={(e) => setCopies(e.target.value)}
+              placeholder="Enter Copies"
             />
             <Input
               value={royalty}
@@ -90,10 +110,10 @@ const Mint = ({ contract }) => {
               onChange={(e) => setOracleId(e.target.value)}
               placeholder="Enter Oracle Id"
             />
-            <div className="my-4"> Enter 3 image Urls, seperated by commas. Put the healthy image first, and the unhealthy image last</div>
+            <div className="my-4"> Enter 3 image Urls, seperated by ", ". Put the healthy image first, and the unhealthy image last</div>
             <Input
               value={urls}
-              onChange={(e) => setUrls(e.target.value.split(","))}
+              onChange={(e) => setUrls(e.target.value)}
               placeholder="Enter urls here"
             />
             <Button

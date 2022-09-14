@@ -1,28 +1,23 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-const defaultOracles = [
-  {
-    id: "myIdPlaceholder",
-    value: 1,
-  },
-  {
-    id: "myIdPlaceholder2",
-    value: 2,
-  }
-]
-
 const Oracles = ({ contract }) => {
-  const [oracles, setOracles] = useState(defaultOracles)
+  const [oracles, setOracles] = useState([])
 
-  const GetOracles = async () => {
+  const getOracles = async () => {
+    var test = null;
     try {
-      //await contract.Mint(mintData, GAS, txFee)
-      setOracles([])
+      test = await contract.get_oracles({})
+      setOracles(test)
+      console.log("oracle success: ", test)
     } catch (error) {
-      console.log(error)
+      console.log("oracle error: ", error)
     }
   }
+
+  useEffect(() => {
+    getOracles()
+  }, [])
 
   return (
     <Wrapper>
@@ -35,11 +30,15 @@ const Oracles = ({ contract }) => {
             oracles.map((oracle) => {
               return(
                 <form className="bd-how w-full flex flex-col">
-                  <h3 className="text-xl text-left mb-2">
-                    Oracle {oracle.id}
+                  <h3 className="text-2xl text-left mb-2 font-bold">
+                    {oracle.oracle_name}
                   </h3>
                   <h3 className="text-xl text-left mb-2">
-                    Value {oracle.value}
+                    Id: {oracle.oracle_id}
+                  </h3>
+                  
+                  <h3 className="text-xl text-left mb-2">
+                    Current Value ({oracle.oracle_unit}): {oracle.oracle_val}
                   </h3>
               </form>
             )

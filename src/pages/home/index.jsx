@@ -28,13 +28,51 @@ const Home = ({ contract }) => {
   // We'll round the loading progression to a whole number to represent the
   // percentage of the Unity Application that has loaded.
   const loadingPercentage = Math.round(loadingProgression * 100);
+  const [data, setData] = useState(null)
 
   useEffect(() => {
-    if(isLoaded === true){
-      const message = "{\"tokens\":[{\"pollution\":1,\"name\":\"name\",\"oracle\":\"oraclename\",\"url\":\"https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350\"},{\"pollution\":0,\"name\":\"name2\",\"oracle\":\"oraclename2\",\"url\":\"https://raw.githubusercontent.com/gist/creaktive/781249/raw/2ea60f845a536a29ba15ca235cb52c465cdf4e4c/trollface.png\"}]}"
+    if(isLoaded === true && data != null){
+      var array = []
+      for (let i = 0; i < data.length; i++) {
+        const dataToStringify = {
+          name: data[i].metadata.title,
+          pollution: data[i].oracle.oracle_val,
+          oracle: data[i].oracle.oracle_name,
+          url: data[i].metadata.media,
+          id: data[i].series_id,
+        }
+        array.push(dataToStringify)
+      }
+
+      const json = {
+        tokens: array
+      }
+      var message = JSON.stringify(json);
+
+      //message = "{\"tokens\":[{\"pollution\":1,\"name\":\"name\",\"oracle\":\"oraclename\",\"url\":\"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmh6CttgjZjoT-NUIGgnDyIQ_FoJtReC6z_Q&usqp=CAU\"},{\"pollution\":0,\"name\":\"name2\",\"oracle\":\"oraclename2\",\"url\":\"https://raw.githubusercontent.com/gist/creaktive/781249/raw/2ea60f845a536a29ba15ca235cb52c465cdf4e4c/trollface.png\"}]}"
+
+    
+      console.log("test data", data);
+      console.log("test message", message);
+
       sendMessage("MapHandler", "SendToController", message);
     }
-  }, [isLoaded, sendMessage])
+  }, [isLoaded, sendMessage, data])
+
+  async function getTokens() {
+    try {
+      const tokens = await contract.get_series()
+      console.log("test result: ", tokens)
+      setData(tokens)
+    } catch (error) {
+      console.log("test error: ", error)
+      return error.message
+    }
+  }
+
+  useEffect(() => {
+    getTokens()
+  }, [])
 
   // const [homeBtn, setHomeBtn] = useState('Create A Token')
   // const [created, setCreated] = useState('')
@@ -43,19 +81,13 @@ const Home = ({ contract }) => {
   const hash = query.get('transactionHashes')
   const history = useHistory()
 
-  // const createNewGame = async () => {
-  //   try {
-  //     await contract.createNewGame({}, GAS, txFee)
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-
   return (
     <Wrapper>
       <section className="bd-intro flex flex-col items-center justify-between">
         <div className="w-full flex mt-10">
           <h1 className="mx-auto" >
+          {/* <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmh6CttgjZjoT-NUIGgnDyIQ_FoJtReC6z_Q&usqp=CAU"} alt="" /> */}
+
             We help nature <br /> with the power of NFTs
           </h1>
         </div>

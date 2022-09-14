@@ -22,16 +22,18 @@ const CreatedTokens = ({ contract }) => {
 
   async function getCreatedGames() {
     try {
-      const pages = await contract?.getCreatedGames({ page: 0 })
+      const pages = await contract.get_series()
+      console.log("test result: ", pages)
       return pages
     } catch (error) {
+      console.log("test error: ", error)
       return error.message
     }
   }
 
   const assignCreatedTokens = () => {
     getCreatedGames()
-      .then((res) => setCreatedTokens(res?.data))
+      .then((res) => {setCreatedTokens(res)})
       .finally(() => setLoading(false))
   }
 
@@ -78,27 +80,27 @@ const CreatedTokens = ({ contract }) => {
         </LoaderWrapper>
       ) : (
         <main className="my-20 mx-auto grid grid-cols-3 gap-10">
-          {createdTokens?.map((el) => {
+          {
+            createdTokens != null &&
+            createdTokens?.map((el) => {
             console.log(el)
-            // if (el.status === 0) {
             return (
               <TokenCard
-                key={el.id}
-                id={el.id}
+                key={el.series_id}
+                id={el.series_id}
                 createdAt={
-                  el.createdAt > 0 && new Date(parseNanoSecToMs(el.createdAt))
+                  el.metadata.issued_at > 0 && new Date(parseNanoSecToMs(el.metadata.issued_at))
                 }
-                creator={el.createdBy}
+                creator={el.owner_id}
                 startDate={
-                  el.started > 0 && new Date(parseNanoSecToMs(el.started))
+                  el.metadata.starts_at > 0 && new Date(parseNanoSecToMs(el.metadata.starts_at))
                 }
-                endDate={el.ended > 0 && new Date(parseNanoSecToMs(el.ended))}
-                players={el.players}
+                endDate={el.metadata.expires_at > 0 && new Date(parseNanoSecToMs(el.metadata.expires_at))}
+                media={el.metadata.media}
                 contract={contract}
-                status={el.status}
+                title={el.metadata.title}
               />
             )
-            // }
           })}
         </main>
       )}

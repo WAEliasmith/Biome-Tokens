@@ -1,3 +1,4 @@
+import Big from 'big.js'
 import { utils } from 'near-api-js'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
@@ -33,49 +34,17 @@ const CompletedTokens = ({ contract, currentUser }) => {
   async function getTokenDetails() {
     setLoading(true)
     try {
-      const [token] = await contract?.getGameDetails({ gameId: id })
+      const token = await contract.get_series_details({ id: parseInt(id) })
 
-      console.log(token)
-      const players = await contract?.getPlayersDetails({ gameId: id })
-      const [userPl] = players.filter(
-        (val) => val.playerId === currentUser?.accountId,
-      )
+      console.log("test token:", token)
 
-      if (token.status === 2) {
-        const resWinners = await contract?.getWinners({ gameId: id })
-        if (resWinners) {
-          setWinners(resWinners)
-          console.log(resWinners)
-          if (userPl) {
-            setRolled(userPl?.timeRolled > 0 ? 'Rolled' : 'Roll')
-            setClaimStats(
-              resWinners?.includes(userPl?.playerId)
-                ? 'won'
-                : resWinners?.includes(userPl?.playerId) && userPl?.claimedWin
-                ? 'claimed'
-                : 'lost',
-            )
-          }
-        } else {
-          setRolled('Join')
-          setClaimStats(false)
-        }
-      } else {
-        if (userPl) {
-          setRolled(userPl?.timeRolled > 0 ? 'Rolled' : 'Roll')
-        } else {
-          setRolled('Join')
-        }
-      }
-
-      setUserPlayer(userPl)
-      setPlayers(players)
       setData(token)
     } catch (error) {
-      console.log(error)
-    } finally {
-      setLoading(false)
+      console.log("test failed: ",error)
     }
+    console.log("test 23232: ", data)
+
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -84,7 +53,6 @@ const CompletedTokens = ({ contract, currentUser }) => {
         (res) => {
           console.log(decodeArgs(res))
           // console.log(JSON.parse()
-          handleRoll(decodeArgs(res))
         },
       )
     }
@@ -97,21 +65,29 @@ const CompletedTokens = ({ contract, currentUser }) => {
   }, [])
 
   const handleClick = async () => {
+    var txFee;
+    if(data.price != null && String(data.price).includes("e")){
+      txFee = Big(parseInt(data.price)+0.01)
+      .times(10 ** 24)
+      .toFixed()
+    } else {
+      txFee = Big(parseFloat(data.price)+0.01)
+      .times(10 ** 24)
+      .toFixed()
+    }
+    
+    const GAS = Big(3)
+    .times(10 ** 13)
+    .toFixed()
+
     setBtnLoad(true)
     try {
-      if (data?.status === 2 && winners?.includes(currentUser.accountId)) {
-        await contract?.claimWinnings({ gameId: id })
-      }
-
-      if (data?.status !== 2) {
-        if (userPlayer) {
-          await contract.rollDice({ gameId: id })
-        } else {
-          await contract.joinToken({ gameId: id }, GAS, txFee)
-        }
-      }
+      console.log("test I am binting now: ", currentUser.accountId, )
+      await contract.nft_mint({ id: String(id), receiver_id: currentUser.accountId }, GAS, txFee)
+      console.log("test succeees: ")
+      
     } catch (error) {
-      console.log(error.message)
+      console.log("test buy failed: ", error.message)
     } finally {
       setBtnLoad(false)
       getTokenDetails()
@@ -119,184 +95,72 @@ const CompletedTokens = ({ contract, currentUser }) => {
   }
 
   const renderButton = () => {
-    if (data?.status === 2) {
-      return (
-        userPlayer && (
-          <Button
-            disabled={claimStats !== 'won'}
-            variant={
-              claimStats === 'lost'
-                ? 'red'
-                : claimStats === 'won'
-                ? 'mint'
-                : 'disabled'
-            }
-            onClick={handleClick}
-          >
-            {btnLoad
-              ? 'Processing...'
-              : claimStats === 'lost'
-              ? 'Lost'
-              : claimStats === 'won'
-              ? 'Claim Win'
-              : 'Claimed'}
-          </Button>
-        )
-      )
-    }
-
     return (
       <Button
-        disabled={rolled === 'Rolled'}
-        variant={
-          rolled === 'Rolled'
-            ? 'disabled'
-            : rolled === 'Roll'
-            ? 'mint'
-            : 'secondary'
-        }
         onClick={handleClick}
       >
-        {btnLoad ? 'Processing...' : rolled}
+        Buy Token
       </Button>
     )
   }
 
-  useEffect(() => {
-    var intervalVar = setInterval(() => {
-      if (data?.ended > 0 && data?.status === 1) {
-        const sTime = new Date(parseNanoSecToMs(data?.ended))
-        const eTime = new Date()
-        const countdownTime = sTime.getTime() - eTime.getTime()
-        const minutes = Math.floor(
-          (countdownTime % (1000 * 60 * 60)) / (1000 * 60),
-        )
-        const seconds = Math.floor((countdownTime % (1000 * 60)) / 1000)
-        if (countdownTime > 0) {
-          setCounter(
-            `${minutes < 10 ? '0' + minutes : minutes}:${
-              seconds < 10 ? '0' + seconds : seconds
-            }`,
-          )
-        } else {
-          setCounter('00:00')
-        }
-      }
-    }, 1000)
-
-    return () => clearInterval(intervalVar)
-  }, [data])
-
-  const handleRoll = (dice) => {
-    if (Array.isArray(dice)) {
-      setRoll(dice)
-      setRollModal(true)
-    } else {
-      history.push(history.pathname)
-    }
-  }
   return (
     <Wrapper>
-      <header style={{ textAlign: 'center' }}>TOKEN ID: {id}</header>
+      <header style={{ textAlign: 'center' }}>SERIES ID: {id}</header>
       {loading ? (
         <LoaderWrapper className="mt-20">
           <DualRingLoader width={100} height={100} />
         </LoaderWrapper>
       ) : data ? (
         <main className="mt-10 mx-auto grid ">
+        <div className="width-full mx-auto flex">
+          <img id="img1" src={data?.metadata.media} />
+        </div>
           <div className="bd-token-details grid-cols-2 gap-10 relative">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col items-center justify-between">
               <h3 className="text-2xl font-semibold">
-                Creator: {data?.createdBy}
+                Owner: {data?.owner_id}
               </h3>
               <h3 className="text-2xl font-semibold">
-                Created:{' '}
+                Title: {data?.metadata.title}
+              </h3>
+              <h3 className="text-2xl font-semibold">
+                {data?.metadata.created_at && <>Created:{' '}
                 {dateFormater(
-                  data?.createdAt &&
-                    new Date(parseNanoSecToMs(data?.createdAt)),
-                )}
+                  data?.metadata.created_at &&
+                    new Date(parseNanoSecToMs(data?.metadata.created_at)),
+                )}</>}
               </h3>
-            </div>
-            <div className="mt-8 flex grid-cols-2 gap-10 items-center justify-between">
-              {data?.started > 0 && (
-                <h3 className="text-2xl font-semibold">
-                  Started:{' '}
-                  {dateFormater(new Date(parseNanoSecToMs(data?.started)))}
-                </h3>
-              )}
-              {data?.ended > 0 && (
-                <h3 className="text-2xl font-semibold">
-                  Ended: {dateFormater(new Date(parseNanoSecToMs(data?.ended)))}
-                </h3>
-              )}
-            </div>
-            <div className="mt-8 flex grid-cols-2 gap-10 items-center justify-between">
+              <form className="bd-how flex flex-col">
+                  <h3 className="text-2xl text-center mb-2 font-bold">
+                    {data.oracle.oracle_name}
+                  </h3>
+                  <h3 className="text-xl text-center mb-2">
+                    Current Value ({data.oracle.unit}): {data.oracle.oracle_val}
+                  </h3>
+              </form>
               <h3 className="text-2xl font-semibold">
-                Prize: {utils.format.formatNearAmount(data?.prize)} NEAR Token
+                Charity Royalty: { Object.values(data.royalty)[0]}
               </h3>
               <h3 className="text-2xl font-semibold">
-                Status:{' '}
-                {data?.status === 0
-                  ? 'Created'
-                  : data?.status === 1
-                  ? 'Active'
-                  : data?.status === 2
-                  ? 'Ended'
-                  : '...'}
+                Seller Royalty: {100 - Object.values(data.royalty)[0]}
+              </h3>
+              <h3 className="text-2xl font-semibold mt-8">
+              {console.log("test 24242: ", data)}
+
+              {
+                data.price != null && String(data.price).includes("e") &&
+                <> price: {parseInt(data.price)} NEAR Token</>
+              }
+
+              {
+                data.price != null && !String(data.price).includes("e") &&
+                <> price: {utils.format.formatNearAmount(data.price)} NEAR Token</>
+              }
+                
               </h3>
             </div>
-            {data?.status === 1 && (
-              <div className="mt-8 flex items-center justify-center">
-                <Timer time={counter} />
-              </div>
-            )}
-            <div className="full-width">
-              <h3 className="text-2xl text-white font-semibold mt-32 mb-3 text-center p-3 full-width bg-blue-900">
-                Players ({data?.players})
-              </h3>
-
-              <div
-                style={{ maxHeight: 350, overflowY: 'auto' }}
-                className="mt-8 grid grid-cols-3 gap-10"
-              >
-                {players?.map((player) => (
-                  <div key={player?.playerId}>
-                    <p>{player.playerId}</p>
-
-                    {data.status === 2 && (
-                      <>
-                        <small className="my-1 block">
-                          Dice 1: {player?.roll1 || '-'}
-                        </small>
-                        <small className="my-1 block">
-                          Dice 2: {player?.roll2 || '-'}
-                        </small>
-                      </>
-                    )}
-                    <small className="my-1 block">
-                      Joined On:{' '}
-                      {parseInt(player?.timeJoined) > 0
-                        ? dateFormater(
-                            new Date(parseNanoSecToMs(player?.timeJoined)),
-                          )
-                        : '-'}
-                    </small>
-
-                    <small className="my-1 block">
-                      Rolled On:{' '}
-                      {player?.timeRolled > 0
-                        ? dateFormater(
-                            new Date(parseNanoSecToMs(player?.timeRolled)),
-                          )
-                        : '-'}
-                    </small>
-                    <small className="my-1 block">
-                      Claimed Win: {player?.claimedWin ? 'Yes' : 'No'}
-                    </small>
-                  </div>
-                ))}
-              </div>
-            </div>
+        
             <div className="full-width mt-10 flex flex-col items-center">
               {renderButton()}
             </div>
@@ -311,20 +175,6 @@ const CompletedTokens = ({ contract, currentUser }) => {
           Token not fetched
         </h3>
       )}
-
-      <ModalComponent
-        dice1={roll[0]}
-        dice2={roll[1]}
-        open={rollModal && roll.length > 0}
-        handleClose={() => {
-          query.delete('transactionHashes')
-          history.replace({
-            search: query.toString(),
-          })
-
-          setRollModal(false)
-        }}
-      />
     </Wrapper>
   )
 }
