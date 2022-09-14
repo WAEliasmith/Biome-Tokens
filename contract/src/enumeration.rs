@@ -3,8 +3,9 @@ use crate::nft_core::NonFungibleTokenCore;
 
 
 /// Struct to return in views to query for specific data related to a series
-#[derive(BorshDeserialize, BorshSerialize, Serialize)]
-#[serde(crate = "near_sdk::serde")]
+#[derive(BorshDeserialize, BorshSerialize)]
+//GOT RID OF SERIALIZE
+//#[serde(crate = "near_sdk::serde")]
 pub struct JsonSeries {
     series_id: u64,
     // Metadata including title, num copies etc.. that all tokens will derive from
@@ -13,6 +14,8 @@ pub struct JsonSeries {
     royalty: Option<HashMap<AccountId, u32>>,
     // Owner of the collection
     owner_id: AccountId,
+    //possible media
+    possible_media: LookupMap<i32, String>,
 }
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize)]
@@ -113,7 +116,7 @@ impl Contract {
             //skip to the index we specified in the start variable
             .skip(start as usize)
             //take the first "limit" elements in the vector. If we didn't specify a limit, use 50
-            .take(limit.unwrap_or(50) as usize)
+            .take(limit.unwrap_or(100) as usize)
             //we'll map the series IDs which are strings into Json Series
             .map(|series_id| self.get_series_details(series_id.clone()).unwrap())
             //since we turned the keys into an iterator, we need to turn it back into a vector to return
@@ -126,11 +129,35 @@ impl Contract {
         let series = self.series_by_id.get(&id);
         //if there is some series, we'll return the series
         if let Some(series) = series {
+            let low_post = series.good_range;
+            let high_post = series.bad_range;
+            let fresh_tracked_value = self.get_oracle_value(series.oracle_id);
+            
+            // let temp_metadata = series.metadata;
+            // let mut temp_media = temp_metadata.media;
+            let mut case_num = &5 as &i32;
+            if fresh_tracked_value < high_post && fresh_tracked_value > low_post{
+                //set it to OK media
+                case_num = &1 as &i32;
+            }
+            else if fresh_tracked_value >= high_post{
+                //set it to bad media
+                case_num = &2 as &i32;
+            } 
+            else{
+                //set it to good media
+                case_num = &0 as &i32;
+            }
+            let mut metadata = series.metadata;
+            metadata.media = series.possible_media.get(case_num);
+
+            
             Some(JsonSeries {
                 series_id: id,
-                metadata: series.metadata,
+                metadata: metadata,
                 royalty: series.royalty,
                 owner_id: series.owner_id,
+                possible_media: series.possible_media,
             })
         } else {
             //if there isn't a series, we'll return None

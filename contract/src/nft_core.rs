@@ -175,6 +175,23 @@ impl NonFungibleTokenCore for Contract {
                 // If there is no title, we simply create one based on the series number and edition number
                 metadata.title = Some(format!("Series {} : Edition {}", split[0], split[1]));
             }
+            //implement changing metadata.media according to tracked value and high+low
+           
+
+
+    //         #[private]
+    // pub fn change_media(
+    //     &mut self,
+    //     new_url: Option<String>, 
+    //     id: u64,
+    // ){
+            // env::log_str(&format!("New URL: {}", new_url.clone().unwrap_or("NO URL".to_string())));
+            // let mut series = self.series_by_id.get(&id).expect("Not a series.");
+            // let mut series_metadata = series.metadata;
+            // series_metadata.media = new_url;
+            // series.metadata = series_metadata;
+            // self.series_by_id.insert(&id, &series);
+    // }
 
             //we return the JsonToken (wrapped by Some since we return an option)
             Some(JsonToken {

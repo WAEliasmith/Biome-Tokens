@@ -185,7 +185,7 @@ impl NonFungibleTokenCore for Contract {
         let mut series = self.series_by_id.get(&id).expect("Not a series.");
         
         //calculate royalties to be taken by "charity" assuming charity and owner are the only 2
-        let mut charity_royalty_perc = 100.0*(tracked_val-series.good_range.unwrap())/(series.bad_range.unwrap()-series.good_range.unwrap());
+        let mut charity_royalty_perc = 100.0*(tracked_val-series.good_range)/(series.bad_range - series.good_range);
         if charity_royalty_perc > 100.0 {
             charity_royalty_perc = 100.0
         } else if charity_royalty_perc < 0.0 {

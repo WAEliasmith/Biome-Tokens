@@ -1,5 +1,5 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::collections::{LazyOption, LookupMap, LookupSet, UnorderedMap, UnorderedSet};
+use near_sdk::collections::{LazyOption, LookupMap, LookupSet, UnorderedMap, UnorderedSet, vector};
 use near_sdk::json_types::{Base64VecU8, U128};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{
@@ -34,6 +34,10 @@ pub const NFT_METADATA_SPEC: &str = "nft-1.0.0";
 /// This is the name of the NFT standard we're using
 pub const NFT_STANDARD_NAME: &str = "nep171";
 
+// #[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize)]
+// #[serde(crate = "near_sdk::serde")]
+
+
 // Represents the series type. All tokens will derive this data.
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct Series {
@@ -49,13 +53,15 @@ pub struct Series {
     // Owner of the collection
     owner_id: AccountId,
     // // the value at which whatever measured level is good
-    good_range: Option<f64>,
+    good_range: f64,
     // the value at which whatever measured level is bad
-    bad_range: Option<f64>,
+    bad_range: f64,
     // // the AccountId of the charity
     charity_id: AccountId,
-
-    oracle_id: OracleId
+    //list of possible media
+    possible_media: LookupMap<i32, String>,
+    //oracle ID ex. carbon footprint
+    oracle_id: OracleId,
 }
 
 // Represents the oracke type.

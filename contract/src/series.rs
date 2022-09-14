@@ -1,4 +1,4 @@
-use near_sdk::json_types::U64;
+use near_sdk::{json_types::U64, collections::vector};
 
 use crate::*;
 
@@ -16,9 +16,10 @@ impl Contract {
         metadata: TokenMetadata,
         royalty: Option<HashMap<AccountId, u32>>,
         price: Option<U128>,
-        good_range: Option<f64>,
-        bad_range: Option<f64>,
+        good_range: f64,
+        bad_range: f64,
         charity_id: AccountId,
+        all_media: String,
         // charity_id: Option<AccountId>,
         oracle_id: OracleId,
     ) {
@@ -32,6 +33,17 @@ impl Contract {
             self.approved_creators.contains(&caller) == true,
             "only approved creators can add a type"
         );
+
+        //take all possible media and split it into a lookupset
+        let media_split = all_media.split(", ");
+        let mut temp_lookupmap = LookupMap::new(b"s");
+        let mut count: i32 = 0;
+        for s in media_split {
+            //1 --> media_good; 2 --> media_ok; 3 --> media_bad
+            temp_lookupmap.insert(&count, &s.to_string());
+            count += 1;
+        }
+
         // Insert the series and ensure it doesn't already exist
         require!(
             self.series_by_id
@@ -52,6 +64,7 @@ impl Contract {
                         good_range,
                         bad_range,
                         charity_id,
+                        possible_media: temp_lookupmap,
                         oracle_id,
                     }
                 )
